@@ -1,0 +1,81 @@
+﻿@model DigiKala.Core.ViewModels.StoreCouponViewModel
+
+@{
+    Layout = null;
+
+    string strDate = ViewBag.MyDate;
+}
+
+<script type="text/javascript">
+    $("#myPrice").hide();
+</script>
+
+<h4 class="text-center">ثبت کوپن جدید</h4>
+<hr />
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-offset-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+        <form asp-action="AddCoupon">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Name" class="form-control" placeholder="نام کوپن تخفیف" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="Code" class="form-control" placeholder="کد کوپن تخفیف" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="StartDate" class="form-control" placeholder="شروع از" onclick="PersianDatePicker.Show(this, '@strDate')" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="EndDate" class="form-control" placeholder="پایان در" onclick="PersianDatePicker.Show(this, '@strDate')" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check hidden">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsExpire" /> @Html.DisplayNameFor(model => model.IsExpire)
+                </label>
+            </div>
+            <div class="form-group">
+                <textarea asp-for="Desc" class="form-control" placeholder="سایر توضیحات"></textarea>
+                <span asp-validation-for="Desc" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-check-label">
+                    <input type="checkbox" checked id="myCheckedBox" name="myCheckedBox" onclick="myfunction()" /> درصدی
+                </label>
+            </div>
+            <div class="form-group" id="myPrice">
+                <input asp-for="Price" class="form-control" value="0" placeholder="قیمت ریالی تخفیف" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="myPercent">
+                <input asp-for="Percent" class="form-control" value="0" placeholder="درصد تخفیف" />
+                <span asp-validation-for="Percent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="ثبت شود" class="btn btn-success btn-block" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function myfunction() {
+        if (document.getElementById("myCheckedBox").checked) {
+            $("#myPercent").show();
+            $("#myPrice").hide();
+        }
+        else {
+            $("#myPercent").hide();
+            $("#myPrice").show();
+        }
+    }
+</script>
+

@@ -1,0 +1,189 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.Category>
+
+@{
+    ViewData["Title"] = "زیر مجموعه ها";
+    Layout = "~/Views/Shared/_Panel.cshtml";
+
+    int categoryID = ViewBag.MyId;
+}
+
+    <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" style="margin-top: 50px">
+
+        <div class="margin-top-50">
+
+            <h3 class="pull-left">
+                <a href="#" onclick="MyCreate(@categoryID)" class="btn btn-primary">جدید</a>
+            </h3>
+
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="margin-top-50">
+
+            <div class="panel-group">
+
+                @foreach (var item in Model.Where(x => x.ParentId == categoryID))
+                {
+
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading">
+
+                            <h4 class="panel-title">
+
+                                <a role="button" aria-expanded="true" data-toggle="collapse" data-parent="#@item.Id" href="#@item.Id">@item.Name</a>
+
+                                <a href="#" onclick="MyCreate(@item.Id)"><i class="fa fa-plus-circle sub-green-link"></i></a>
+                                <a href="#" onclick="MyEdit(@item.Id)"><i class="fa fa-edit sub-orange-link"></i></a>
+                                <a href="#" onclick="MyDelete(@item.Id)" class=""><i class="fa fa-trash sub-red-link"></i></a>
+
+                            </h4>
+
+                        </div>
+
+                        <div id="@item.Id" class="panel-collapse collapse">
+
+
+                            <div class="panel-body">
+
+                                @if (Model.Any(x => x.ParentId == item.Id))
+                                {
+
+                                    @foreach (var subItem in Model.Where(x => x.ParentId == item.Id))
+                                    {
+                                        <div class="panel panel-default">
+
+                                            <div class="panel-heading">
+
+                                                <h4 class="panel-title">
+
+                                                    <a role="button" aria-expanded="true" data-toggle="collapse" data-parent="#@subItem.Id" href="#@subItem.Id">@subItem.Name</a>
+
+                                                    <a href="#" onclick="MyCreate(@subItem.Id)"><i class="fa fa-plus-circle sub-green-link"></i></a>
+                                                    <a href="#" onclick="MyEdit(@subItem.Id)"><i class="fa fa-edit sub-orange-link"></i></a>
+                                                    <a href="#" onclick="MyDelete(@subItem.Id)" class=""><i class="fa fa-trash sub-red-link"></i></a>
+                                                </h4>
+
+                                            </div>
+
+                                            <div id="@subItem.Id" class="panel-collapse collapse">
+
+                                                <div class="panel-body">
+
+                                                    @if (Model.Any(x => x.ParentId == subItem.Id))
+                                                    {
+
+                                                        @foreach (var subsubItem in Model.Where(x => x.ParentId == subItem.Id))
+                                                        {
+
+                                                            <div class="panel panel-default">
+
+                                                                <div class="panel-heading">
+
+                                                                    <h4 class="panel-title">
+
+                                                                        <a role="button" aria-expanded="true" data-toggle="collapse" data-parent="#@subsubItem.Id" href="#@subsubItem.Id">@subsubItem.Name</a>
+
+                                                                        <a href="#" onclick="MyEdit(@subsubItem.Id)"><i class="fa fa-edit sub-orange-link"></i></a>
+                                                                        <a href="#" onclick="MyDelete(@subsubItem.Id)" class=""><i class="fa fa-trash sub-red-link"></i></a>
+
+                                                                    </h4>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        }
+
+                                                    }
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    }
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div id="bodyModal" class="modal-body">
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section mySection
+{
+    <script>
+        function MyCreate(id) {
+            $.ajax({
+                url: "/Admin/CreateSubCategory/" + id,
+                type: "Get",
+                data: {}
+            }).done(function (result) {
+                $('#myModal').modal('show');
+                $('#bodyModal').html(result);
+            });
+        }
+    </script>
+
+    <script>
+        function MyEdit(id) {
+            $.ajax({
+                url: "/Admin/EditCategory/" + id,
+                type: "Get",
+                data: {}
+            }).done(function (result) {
+                $('#myModal').modal('show');
+                $('#bodyModal').html(result);
+            });
+        }
+    </script>
+
+    <script>
+        function MyDelete(id) {
+            $.ajax({
+                url: "/Admin/DeleteCategory/" + id,
+                type: "Get",
+                data: {}
+            }).done(function (result) {
+                $('#myModal').modal('show');
+                $('#bodyModal').html(result);
+            });
+        }
+    </script>
+}

@@ -1,0 +1,97 @@
+﻿@model DigiKala.DataAccessLayer.Entities.Coupon
+
+@{
+    Layout = null;
+}
+
+<table class="table table-hover">
+
+    <tr>
+
+        <td class="text-center">
+
+            نام کوپن تخفیف : @Model.Name
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td class="text-center">
+
+            کد کوپن تخفیف : @Model.Code
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td class="text-center">
+
+            شروع کوپن تخفیف : @Model.StartDate
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td class="text-center">
+
+            پایان کوپن تخفیف : @Model.EndDate
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td class="text-center">
+
+            قیمت : @Model.Price.ToString("n0") ریال
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td class="text-center">
+
+            درصد تخفیف : @Model.Percent
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td class="text-center">
+
+            سایر توضیحات : @Model.Desc
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td class="text-center">
+
+            @if (Model.IsExpire)
+            {
+                <p>وضعیت : منقضی</p>
+            }
+            else
+            {
+                <p>وضعیت : فعال</p>
+            }
+
+        </td>
+
+    </tr>
+
+</table>
+

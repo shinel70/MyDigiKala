@@ -1,0 +1,33 @@
+﻿@model DigiKala.Core.ViewModels.AdminBrandViewModel
+
+@{
+    Layout = null;
+}
+
+<h4 class="text-center">ثبت برند جدید</h4>
+<hr />
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-offset-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+        <form asp-action="AddBrand" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Name" class="form-control" placeholder="نام برند" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check hidden">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="NotShow" /> @Html.DisplayNameFor(model => model.NotShow)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Img" class="control-label"></label>
+                <input asp-for="Img" class="form-control" />
+                <span asp-validation-for="Img" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="ثبت شود" class="btn btn-success btn-block" />
+            </div>
+        </form>
+    </div>
+</div>
+

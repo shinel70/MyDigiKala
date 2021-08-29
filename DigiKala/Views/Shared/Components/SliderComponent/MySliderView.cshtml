@@ -1,0 +1,54 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.Slider>
+
+@{ 
+    bool active = true;
+}
+
+<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+            if (i == 0)
+            {
+                <li data-target="#carousel-example-generic" data-slide-to="@i" class="active"></li>
+            }
+            else
+            {
+                <li data-target="#carousel-example-generic" data-slide-to="@i"></li>
+            }
+        }
+
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+
+        @foreach (var item in Model)
+        {
+            if (active)
+            {
+                <div class="item active">
+                    <img src="~/images/sliders/@item.Img" alt="دیجی کالا" class="img-responsive">
+                    @*<div class="carousel-caption">
+                        ...
+                    </div>*@
+                </div>
+
+                active = false;
+            }
+            else
+            {
+                <div class="item">
+                    <img src="~/images/sliders/@item.Img" alt="دیجی کالا" class="img-responsive">
+                    @*<div class="carousel-caption">
+                        ...
+                    </div>*@
+                </div>
+            }
+        }
+
+    </div>
+
+</div>

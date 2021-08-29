@@ -1,0 +1,154 @@
+﻿@model DigiKala.Core.ViewModels.ProductDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.FillProduct.Name;
+    Layout = "~/Views/Shared/_Site.cshtml";
+}
+
+
+<div class="container main-container">
+    <div class="row">
+
+        <div class="col-lg-5 col-md-6 about-product-col">
+
+            <div class="product-pics-area">
+
+
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-7 col-md-6 about-product-col">
+
+            <div class="about-product-area">
+
+                <div class="about-heading">
+                    <h1>@Model.FillProduct.Name</h1>
+                </div>
+                <div class="about-product-body">
+                    <div class="product-population">
+                        <div class="populer-wrapper rank-area">
+                            <i class="fa fa-star rank-star-p"></i><span class="ranked-span">4.4</span>
+                        </div>
+                        <div class="populer-wrapper">
+                            <a href="#" class="members-see">2340 دیدگاه کاربران</a>
+                        </div>
+                    </div>
+                    <div class="brand-categroie-area">
+                        <div class="brand-cat brand-area">
+                            <span>برند : <a href="#">@Model.FillProduct.Brand.Name</a></span>
+                        </div>
+                        <div class="brand-cat brand-area">
+                            <span>دسته بندی : <a href="#">@Model.FillProduct.Category.Name</a></span>
+                        </div>
+                    </div>
+                    <div class="about-seller-area">
+                        <i class="fa fa-user-circle-o seller-icon"></i><span class="seller-discribe">فروشنده : <span class="seller-about">@Model.FillProduct.Store.Name</span></span>
+                        <div class="seller-population-area">
+                            <div class="links-area">
+                                <a href="#" class="population-link product-work">
+                                    عملکرد
+                                    :&nbsp;
+                                </a><a href="#">4.5 از 5</a>
+                            </div>
+                            <div class="costumer-consent links-area"><a href="#">85% رضایت از کالا</a></div>
+                        </div>
+                    </div>
+                    <div class="about-seller-area">
+                        <i class="fa fa-thumbs-o-up seller-icon"></i><span class="warranty-span">گارانتی 18 ماهه</span>
+                    </div>
+                    <div class="about-seller-area border-bottm-seller">
+                        @if (Model.FillProduct.Exist == 0)
+                        {
+                            <i class="fa fa-times seller-icon exist-in"></i><span class="exist-span">موجود نیست</span>
+                        }
+                        else
+                        {
+                            if (Model.FillProduct.Exist <= 5)
+                            {
+                                <i class="fa fa-check seller-icon exist-in"></i><span class="exist-span">تنها @Model.FillProduct.Exist عدد باقی مانده</span>
+                            }
+                            else
+                            {
+                                <i class="fa fa-check seller-icon exist-in"></i><span class="exist-span">موجود در انبار</span>
+                            }
+                        }
+                    </div>
+                    <div class="price-btn-area">
+                        <div class="price-area">
+                            <span class="price-span-green">@Model.FillProduct.Price.ToString("n0")</span><span class="next-price-span-green">ریال</span>
+                            @if (Model.FillProduct.DeletePrice != 0)
+                            {
+                                <del class="price-span-red">@Model.FillProduct.DeletePrice.ToString("n0")</del><span class="next-price-span-red">ریال</span>
+                            }
+                        </div>
+                        @if (Model.FillProduct.Exist != 0)
+                        {
+                            <div class="basket-btn-area"><a class="basket-btn" href="#">افزودن به سبد خرید</a></div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="container slider-container">
+
+</div>
+
+<div class="last-tabs-area">
+
+    <div class="container">
+
+        <div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item  tab-item">
+                    <a href="#tab-1" class="nav-link tab-links active" role="tab" data-toggle="tab">
+                        توضیحات
+                    </a>
+                </li>
+                <li class="nav-item tab-item">
+                    <a href="#tab-2" class="nav-link tab-links" role="tab" data-toggle="tab">
+                        نقد و بررسی
+                    </a>
+                </li>
+                <li class="nav-item tab-item">
+                    <a href="#tab-3" class="nav-link tab-links" role="tab" data-toggle="tab">
+                        نظرات
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane" role="tabpanel" id="tab-1">
+
+                    @Html.Raw(Model.FillProduct.Desc)
+
+                </div>
+                <div class="tab-pane" role="tabpanel" id="tab-2">
+
+                    <p>نقد و بررسی در اینجا</p>
+
+                </div>
+                <div class="tab-pane" role="tabpanel" id="tab-3">
+
+                    <p>نظرات</p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section mySection
+{
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+}

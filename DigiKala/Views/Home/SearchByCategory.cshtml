@@ -1,0 +1,163 @@
+﻿@model DigiKala.Core.ViewModels.SearchCategoryViewModel
+
+@{
+    ViewData["Title"] = "جستجو براساس دسته بندی";
+    Layout = "~/Views/Shared/_Site.cshtml";
+}
+
+<div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+
+    <div class="sidebar-wrapper">
+
+        <div class="box-sidebar">
+            <span class="box-header-sidebar">دسته بندی های مشابه</span>
+            <div class="catalog">
+
+                <ul class="catalog-list">
+
+                    <li>
+                        <a href="#" class="catalog-link">@Model.FillParentCategory.Name</a>
+
+                        <div class="show-more">
+
+                            <span class="catalog-cat-item">@Model.FillSelectCategory.Name</span>
+
+                            <ul class="catalog-list">
+
+                                <li>
+
+                                    @foreach (var item in Model.FillCategories.Where(c => c.Id != Model.FillSelectCategory.Id))
+                                    {
+                                        <a href="/Home/SearchByCategory/@item.Id" class="catalog-link">@item.Name</a>
+                                    }
+
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="box-sidebar">
+            <span class="box-header-sidebar">انتخاب فروشنده ها</span>
+            <div class="catalog">
+
+                <ul class="catalog-list">
+
+                    <li>
+                        <div class="show-more">
+
+                            <ul class="catalog-list">
+
+                                <li>
+
+                                    @foreach (var item in Model.FillStores)
+                                    {
+                                        <a href="#" class="catalog-link">@item.Name</a>
+                                    }
+
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="box-sidebar">
+            <span class="box-header-sidebar">انتخاب برند ها</span>
+            <div class="catalog">
+
+                <ul class="catalog-list">
+
+                    <li>
+                        <div class="show-more">
+
+                            <ul class="catalog-list">
+
+                                <li>
+
+                                    @foreach (var item in Model.FillBrands)
+                                    {
+                                        <a href="#" class="catalog-link">@item.Name</a>
+                                    }
+
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>    
+
+</div>
+
+<div class="col-lg-9 col-md-8 col-sm-12 col-xs-12 pull-left">
+
+    <div class="js-products">
+
+        <div class="listing-listing">
+
+            <ul class="listing-item">
+
+                <li style="display:block">
+
+                    @foreach (var item in Model.FillProducts)
+                    {
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 pull-right" style="padding: 0">
+
+                            <div class="promotion-box">
+
+                                <div class="product-seller-details">
+                                    <span class="product-main-seller">فروشنده : @item.Store.Name</span>
+                                </div>
+
+                                <a href="/Product/@item.Id/@item.Name.Replace(" ", "-")" target="_blank" class="promotion-box-image">
+                                    <img src="~/images/products/@item.Img" alt="@item.Name" />
+                                </a>
+
+                                <div class="product-box-content">
+                                    <a href="/Product/@item.Id/@item.Name.Replace(" ", "-")" target="_blank" class="product-box-title">@item.Name</a>
+                                </div>
+
+                                <div class="product-box-row">
+
+                                    <span class="product-box-row">@item.Price.ToString("n0") ریال</span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+

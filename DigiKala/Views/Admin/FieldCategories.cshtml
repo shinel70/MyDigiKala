@@ -1,0 +1,104 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.Field>
+
+@using DigiKala.Core.Classes
+
+@inject PanelLayoutScope scope
+
+@{
+    ViewData["Title"] = "مشخصه ها";
+    Layout = "~/Views/Shared/_Panel.cshtml";
+
+    int catID = ViewBag.CatId;
+}
+
+<div class="col-lg-offset-3 col-lg-8 col-md-offset-3 col-md-8 col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 panel-back">
+
+    <div class="margin-top-50">
+
+        <h3 class="pull-right">
+            <input type="text" id="myInput" onkeyup="myfunction()" placeholder="جستجو ..." />
+        </h3>
+        <h3 class="pull-left">
+            <a href="/Admin/Categories" class="btn btn-danger">بازگشت</a>
+        </h3>
+        <h3 class="pull-left">
+            <a href="#" id="btnSubmit" class="btn btn-success" style="margin-left: 5px">ذخیره</a>
+        </h3>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="margin-top-30">
+
+        <ul id="myUL" style="margin-top: 20px">
+
+            @foreach (var item in Model)
+            {
+                if (scope.ExistsFieldCategory(item.Id, catID))
+                {
+                    <li>
+                        <a>
+                            <input name="mycheck" type="checkbox" value="@item.Id" checked="checked" style="margin-left: 25px;" />
+                            @item.Name
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a>
+                            <input name="mycheck" type="checkbox" value="@item.Id" style="margin-left: 25px;" />
+                            @item.Name
+                        </a>
+                    </li>
+                }
+            }
+
+        </ul>
+
+    </div>
+
+</div>
+
+@section mySection
+{
+    <script>
+        function myfunction() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("myUL");
+            li = ul.getElementsByTagName("li");
+
+            for (var i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                txtValue = a.textContent || a.innerText;
+
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#btnSubmit').click(function () {
+                var result = $('input[type="checkbox"]:checked');
+                if (result.length > 0) {
+                    var resultstring = "";
+                    result.each(function () {
+                        resultstring += $(this).val() + "-";
+                    });
+                    window.open("/Admin/UpdateFieldCategory/@catID?result=" + resultstring, "_parent");
+                }
+                else {
+                    window.open("/Admin/UpdateFieldCategory/@catID?result=0", "_parent");
+                }
+            });
+        });
+
+    </script>
+}

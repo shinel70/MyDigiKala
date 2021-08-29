@@ -1,0 +1,122 @@
+﻿@model DigiKala.Core.ViewModels.ProductAdminViewModel
+
+@{
+    Layout = null;
+}
+
+<h4 class="text-center">جزئیات محصول</h4>
+<hr />
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-offset-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+
+        <table class="table table-hover">
+
+            <tr class="text-center">
+
+                <p class="text-center">نام محصول : @Model.FillProduct.Name</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                <p class="text-center">برند محصول : @Model.FillProduct.Brand.Name</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                <p class="text-center">دسته محصول : @Model.FillProduct.Category.Name</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                <p class="text-center">فروشگاه : @Model.FillProduct.Store.Name</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                <p class="text-center">تاریخ ثبت : @Model.FillProduct.Date</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                <p class="text-center">ساعت ثبت : @Model.FillProduct.Time</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                <p class="text-center">موجودی : @Model.FillProduct.Exist</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                @if (Model.FillProduct.NotShow)
+                {
+                    <p class="text-center">وضعیت نمایش : عدم نمایش</p>
+                }
+                else
+                {
+                    <p class="text-center">وضعیت نمایش : نمایش</p>
+                }
+
+            </tr>
+
+        </table>
+
+        <div class="clearfix"></div>
+
+        <table class="table table-bordered table-hover">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        نام مشخصه
+                    </th>
+                    <th>
+                        مقدار
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model.FillField)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Field.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+        <div class="clearfix"></div>
+
+        @foreach (var item in Model.FillGallery)
+        {
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                <img src="~/images/galleries/@item.Img" alt="تصویر پیدا نشد" class="img-responsive" style="margin: auto" />
+
+            </div>
+        }
+
+    </div>
+</div>
+

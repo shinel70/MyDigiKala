@@ -1,0 +1,58 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.ProductSeen>
+
+@{
+    Layout = null;
+}
+
+
+<div class="margin-top-50">
+
+    <h3 class="pull-right">
+        نمایش بازدید ها (@Model.Count())
+    </h3>
+</div>
+
+<div class="margin-top-30">
+
+    <table class="table table-bordered table-hover">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Time)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IP)
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Time)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IP)
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

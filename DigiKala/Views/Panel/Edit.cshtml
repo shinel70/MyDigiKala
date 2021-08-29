@@ -1,0 +1,60 @@
+﻿@model DigiKala.Core.ViewModels.StorePropertyViewModel
+
+@{
+    ViewData["Title"] = "مشخصات فروشگاه";
+    Layout = "~/Views/Shared/_Panel.cshtml";
+}
+
+<div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+
+    <h1 class="text-center">مشخصات فروشگاه من</h1>
+
+    <hr />
+
+    <div class="row">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @if (ViewBag.MyStatus)
+            {
+                <div class="form-group">
+                    <div class="alert alert-success text-center">
+                        <h4 class="text-center">
+                            تغییرات مشخصات فروشگاه با موفقیت انجام شد
+                        </h4>
+                    </div>
+                </div>
+            }
+
+            <div class="form-group">
+                <input asp-for="Name" class="form-control" placeholder="نام فروشگاه" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <textarea asp-for="Address" class="form-control" placeholder="آدرس"></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Tel" class="form-control" placeholder="شماره تماس" />
+                <span asp-validation-for="Tel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LogoImg" class="control-label"></label>
+                <input asp-for="LogoImg" type="file" />
+                <span asp-validation-for="LogoImg" class="text-danger"></span>
+                <br />
+                <img src="~/images/users/stores/@Model.LogoName" alt="تصویر پیدا نشد" width="100" height="100" class="img-responsive img-circle" style="margin: auto" />
+            </div>
+            <div class="form-group">
+                <textarea asp-for="Desc" class="form-control" placeholder="توضیحات"></textarea>
+                <span asp-validation-for="Desc" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="اعمال تغییرات" class="btn btn-success btn-block" />
+            </div>
+        </form>
+    </div>
+
+
+</div>

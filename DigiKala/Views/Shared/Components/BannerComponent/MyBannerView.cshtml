@@ -1,0 +1,25 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.Banner>
+
+@using DigiKala.Core.Classes
+
+@inject TemplateScope scope
+
+@foreach (var item in Model)
+{
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top: 10px; margin-bottom: 10px">
+
+        @if (scope.CheckBanner(item.Id))
+        {
+            <a href="@scope.GetBanner(item.Id).Url" target="_blank">
+                <img src="~/images/ads/@scope.GetBanner(item.Id).Img" alt="@item.Name" class="img-responsive" />
+            </a>
+        }
+        else
+        {
+            <img src="~/images/ads/@item.DefaultImg" alt="@item.Name" class="img-responsive" />
+        }
+
+    </div>
+
+}

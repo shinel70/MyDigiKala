@@ -1,0 +1,52 @@
+﻿@model DigiKala.Core.ViewModels.UpdateStoreCategoryViewModel
+
+@{
+    ViewData["Title"] = "نمایش مدرک";
+    Layout = "~/Views/Shared/_Panel.cshtml";
+}
+
+    <div class="col-lg-offset-3 col-lg-8 col-md-offset-3 col-md-8 col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 panel-back">
+
+        <div class="margin-top-50">
+
+            <h3 class="pull-right">
+                نمایش مدرک
+            </h3>
+            <h3 class="pull-left">
+                <a href="/Admin/ShowStoreCategories" class="btn btn-danger">بازگشت</a>
+            </h3>
+
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="margin-top-30">
+
+            <div class="row">
+                <div class="col-md-4 col-lg-offset-4">
+                    <form asp-action="EditStoreCategory">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <img src="~/images/users/stores/@Model.Img" alt="تصویر مدرک پیدا نشد" class="img-responsive" style="margin: auto" />
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Desc" class="control-label"></label>
+                            <textarea asp-for="Desc" class="form-control"></textarea>
+                            <span asp-validation-for="Desc" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="submit" value="ذخیره تغییرات" class="btn btn-success btn-block" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>

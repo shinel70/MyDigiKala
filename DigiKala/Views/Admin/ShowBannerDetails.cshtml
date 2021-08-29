@@ -1,0 +1,121 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.BannerDetails>
+
+@{
+    ViewData["Title"] = "نمایش بنر های جایگاه";
+    Layout = "~/Views/Shared/_Panel.cshtml";
+}
+
+<div class="col-lg-offset-3 col-lg-8 col-md-offset-3 col-md-8 col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 panel-back">
+
+    <div class="margin-top-50">
+
+        <h3 class="pull-right">
+            نمایش بنر های جایگاه
+        </h3>
+        <h3 class="pull-left">
+            <a href="#" onclick="MyCreate(@ViewBag.MyId)" class="btn btn-primary">جدید</a>
+        </h3>
+
+    </div>
+
+    <div class="margin-top-30">
+
+        <table class="table table-bordered table-hover">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.StartDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EndDate)
+                    </th>
+                    <th>
+                        تصویر بنر
+                    </th>
+                    <th>
+                        منقضی
+                    </th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        <img src="~/images/ads/@item.Img" alt="تصویر پیدا نشد" class="img-responsive" width="100" height="55" />
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(modelItem => item.IsExpire)
+                    </td>
+                </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div id="bodyModal" class="modal-body">
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section mySection
+{
+    <script>
+        function MyCreate(id) {
+            $.ajax({
+                url: "/Admin/AddBannerDetails/" + id,
+                type: "Get",
+                data: {}
+            }).done(function (result) {
+                $('#myModal').modal('show');
+                $('#bodyModal').html(result);
+            });
+        }
+    </script>
+
+}
+
+

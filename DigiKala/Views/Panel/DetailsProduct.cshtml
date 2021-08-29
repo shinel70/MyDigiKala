@@ -1,0 +1,91 @@
+﻿@model DigiKala.DataAccessLayer.Entities.Product
+
+@{
+    Layout = null;
+}
+
+    <table class="table table-hover">
+
+        <tr>
+
+            <td class="text-center">
+
+                نام محصول : @Model.Name
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="text-center">
+
+                قیمت : @Model.Price.ToString("n0") ریال
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="text-center">
+
+                قیمت قدیم : @Model.DeletePrice.ToString("n0") ریال
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="text-center">
+
+                موجودی : @Model.Exist
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="text-center">
+
+                برند : @Model.Brand.Name
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="text-center">
+
+                دسته : @Model.Category.Name
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="text-center">
+
+                <img src="~/images/products/@Model.Img" alt="تصویر پیدا نشد" class="img-responsive" style="margin: auto" width="150" height="150" />
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="text-center">
+
+                توضیحات : @Html.Raw(Model.Desc)
+
+            </td>
+
+        </tr>
+
+    </table>
+
+

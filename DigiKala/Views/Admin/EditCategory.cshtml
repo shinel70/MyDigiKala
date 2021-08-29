@@ -1,0 +1,33 @@
+﻿@model DigiKala.DataAccessLayer.Entities.Category
+
+@{
+    Layout = null;
+}
+
+<h4 class="text-center">اصلاح دسته @Model.Name</h4>
+<hr />
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-offset-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+        <form asp-action="EditCategory">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @*<label asp-for="Name" class="control-label"></label>*@
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group hidden">
+                <label asp-for="ParentId" class="control-label"></label>
+                <select asp-for="ParentId" class="form-control" asp-items="ViewBag.ParentId"></select>
+                <span asp-validation-for="ParentId" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                <input asp-for="Icon" class="form-control" />
+                <span asp-validation-for="Icon" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                <input type="submit" value="ذخیره تغییرات" class="btn btn-success btn-block" />
+            </div>
+        </form>
+    </div>
+</div>
+

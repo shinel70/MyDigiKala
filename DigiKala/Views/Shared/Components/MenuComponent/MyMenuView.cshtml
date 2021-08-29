@@ -1,0 +1,18 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.Category>
+
+@foreach (var item in Model)
+{
+    <li class="mega-drop-down">
+        <a href="#"><i class="fa @item.Icon"></i>@item.Name</a>
+        <div class="animated fadeIn mega-menu"  style="z-index: 1000">
+            <div class="mega-menu-wrap">
+                <div class="row">
+
+                    @(await Component.InvokeAsync("MenuByIdComponent", item.Id))
+
+                    
+                </div>
+            </div>
+        </div>
+    </li>
+}

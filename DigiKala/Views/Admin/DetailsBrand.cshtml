@@ -1,0 +1,49 @@
+﻿@model DigiKala.DataAccessLayer.Entities.Brand
+
+@{
+    Layout = null;
+}
+
+<h4 class="text-center">جزئیات برند</h4>
+<hr />
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-offset-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+
+        <table class="table table-hover">
+
+            <tr class="text-center">
+
+                <p class="text-center">نام برند : @Model.Name</p>
+
+            </tr>
+
+            <tr class="text-center">
+
+                @if (Model.NotShow)
+                {
+                    <p class="text-center">وضعیت نمایش : عدم تأیید</p>
+                }
+                else
+                {
+                    <p class="text-center">وضعیت نمایش : تأیید</p>
+                }
+
+            </tr>
+
+            <tr class="text-center">
+
+                <img src="~/images/brands/@Model.Img" alt="تصویر پیدا نشد" width="250" height="250" class="img-responsive" style="margin: auto" />
+
+            </tr>
+
+            @*<tr class="text-center">
+
+                <p class="text-center">نام برند : @Model.Name</p>
+
+            </tr>*@
+
+        </table>
+
+    </div>
+</div>
+

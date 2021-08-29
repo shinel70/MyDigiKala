@@ -1,0 +1,10 @@
+﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.Category>
+
+<ul class="stander">
+
+    @foreach (var item in Model)
+    {
+        <li><a href="/Home/SearchByCategory/@item.Id">@item.Name</a></li>
+    }
+
+</ul>
