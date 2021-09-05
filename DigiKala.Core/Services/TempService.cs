@@ -38,16 +38,6 @@ namespace DigiKala.Core.Services
             return _context.Banners.ToList();
         }
 
-        public List<Brand> GetBrands(int id)
-        {
-            List<Brand> brands = (from b in _context.Brands
-                                  join p in _context.Products
-                                  on b.Id equals p.BrandId
-                                  where p.CategoryId == id
-                                  select b).OrderBy(b => b.Name).Distinct().ToList();
-
-            return brands;
-        }
 
         public List<Category> GetCategories()
         {
@@ -66,30 +56,16 @@ namespace DigiKala.Core.Services
 
         public Product GetProductDetail(int id)
         {
-            return _context.Products.Include(p => p.Store).Include(p => p.Brand).Include(p => p.Category).FirstOrDefault(p => p.Id == id);
+            return _context.Products.Include(p => p.Store).Include(p => p.Brand).Include(p => p.Category).Include(p => p.ProductGalleries).FirstOrDefault(p => p.Id == id);
         }
 
-        public List<Product> GetProducts(int id)
-        {
-            return _context.Products.Include(p => p.Brand).Include(p => p.Category).Include(p => p.Store)
-                    .Where(p => p.CategoryId == id).OrderByDescending(p => p.Id).ToList();
-        }
 
         public List<Slider> GetSliders()
         {
             return _context.Sliders.Where(c => c.NotShow == false).OrderBy(c => c.OrderShow).ToList();
         }
 
-        public List<Store> GetStores(int id)
-        {
-            List<Store> stores = (from s in _context.Stores
-                                  join p in _context.Products
-                                  on s.UserId equals p.StoreId
-                                  where p.CategoryId == id
-                                  select s).OrderBy(s => s.Name).Distinct().ToList();
 
-            return stores;
-        }
 
         public void UpdateBannerExpire(int id)
         {

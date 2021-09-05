@@ -21,31 +21,31 @@ namespace DigiKala.Core.Services
             _context = context;
         }
 
-        public void ActiveMailAddress(string mailAddress)
-        {
-            Store store = _context.Stores.FirstOrDefault(s => s.Mail == mailAddress);
+        //public void ActiveMailAddress(string mailAddress)
+        //{
+        //    Store store = _context.Stores.FirstOrDefault(s => s.Mail == mailAddress);
 
-            store.MailActivate = true;
-            _context.SaveChanges();
-        }
+        //    store.MailActivate = true;
+        //    _context.SaveChanges();
+        //}
 
-        public void ActiveMobileNumber(string mobileNumber)
-        {
-            Store store = _context.Stores.Include(s => s.User).FirstOrDefault(s => s.User.Mobile == mobileNumber);
+        //public void ActiveMobileNumber(string mobileNumber)
+        //{
+        //    Store store = _context.Stores.Include(s => s.User).FirstOrDefault(s => s.User.Mobile == mobileNumber);
 
-            store.MobileActivate = true;
-            _context.SaveChanges();
-        }
+        //    store.MobileActivate = true;
+        //    _context.SaveChanges();
+        //}
 
-        public bool ExistsMailActivate(string username, string code)
-        {
-            return _context.Stores.Include(s => s.User).Any(s => s.User.Mobile == username && s.MailActivateCode == code);
-        }
+        //public bool ExistsMailActivate(string username, string code)
+        //{
+        //    return _context.Stores.Include(s => s.User).Any(s => s.User.Mobile == username && s.MailActivateCode == code);
+        //}
 
-        public bool ExistsMobileActivate(string username, string code)
-        {
-            return _context.Users.Any(u => u.Mobile == username && u.ActiveCode == code);
-        }
+        //public bool ExistsMobileActivate(string username, string code)
+        //{
+        //    return _context.Users.Any(u => u.Mobile == username && u.ActiveCode == code);
+        //}
 
         public bool ExistsPermission(int permissionID, int roleID)
         {

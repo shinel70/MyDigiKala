@@ -11,10 +11,18 @@ namespace DigiKala.DataAccessLayer.Entities
         [Key]
         public int Id { get; set; }
 
-        [Display(Name = "سطح دسترسی")]
+        [Display(Name = "نام دسترسی")]
         [Required(ErrorMessage = "نباید بدون مقدار باشد")]
         [MaxLength(50, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
         public string Name { get; set; }
+        [Display(Name = "سطح دسترسی")]
+        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
+        [MaxLength(50, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
+        public string Controller { get; set; }
+        [Display(Name = "عملیات دسترسی")]
+        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
+        [MaxLength(50, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
+        public string Action { get; set; }
 
         public virtual ICollection<RolePermission> RolePermissions { get; set; }
     }

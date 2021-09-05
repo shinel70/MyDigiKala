@@ -13,45 +13,69 @@ using DigiKala.Core.Services;
 using DigiKala.DataAccessLayer.Entities;
 
 using DigiKala.Core.Classes;
+using DigiKala.DataAccessLayer.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigiKala.Controllers
 {
     public class HomeController : Controller
     {
         private ITemp _temp;
+        private DatabaseContext _context;
 
         private PersianCalendar pc = new PersianCalendar();
 
-        public HomeController(ITemp temp)
+        public HomeController(ITemp temp, DatabaseContext context)
         {
             _temp = temp;
+            _context = context;
         }
-
-        public IActionResult SearchByCategory(int id)
+        [Route("/Home/{ControllerName}/{CategoryName}")]
+        public IActionResult SearchByCategory(string categoryName)
         {
-            List<Product> products = _temp.GetProducts(id);
-            List<Brand> brands = _temp.GetBrands(id);
-            Category category = _temp.GetCategory(id);
+            Category selectCategory = _context.Categories.Include(c => c.Parent).ThenInclude(parent => parent.SubCategories).FirstOrDefault(c => c.Name == categoryName);
+            List<Category> categories = _context.Categories.ToList();
+            List<int> knownCategoryIds = new List<int>() { selectCategory.Id };
+            List<Category> knownCategories = new List<Category>();
+            if (selectCategory.Parent != null)
+                knownCategories.AddRange(selectCategory.Parent.SubCategories);
+            else
+                knownCategories.AddRange(categories.Where(c => c.ParentId == null).ToList());
+            foreach (var category in categories)
+            {
+                if (knownCategoryIds.Contains(category.ParentId ?? 0))
+                {
+                    knownCategoryIds.Add(category.Id);
+                    knownCategories.Add(category);
+                }
+            }
 
-            List<Category> categories = _temp.GetCategoryById(Convert.ToInt32(category.ParentId));
+            List<Product> products  = _context.Products.Include(p => p.Brand).Include(p => p.Category).Include(p => p.Store)
+                .Where(p => knownCategoryIds.Contains(p.CategoryId)).ToList();
 
-            Category parentCategory = _temp.GetCategory(Convert.ToInt32(category.ParentId));
+            
+            List<Brand> brands = products.Select(p=>p.Brand).Distinct().ToList();
+            //Category category = _temp.GetCategory(categoryId);
 
-            List<Store> stores = _temp.GetStores(id);
+            //List<Category> categories = _temp.GetCategoryById(Convert.ToInt32(category.ParentId));
+
+            //Category parentCategory = _temp.GetCategory(Convert.ToInt32(category.ParentId));
+
+            //List<Store> stores = _temp.GetStores(categoryId);
+            List<Store> stores = products.Select(p => p.Store).Distinct().ToList();
 
             var viewmodel = new SearchCategoryViewModel();
 
             viewmodel.FillBrands = brands;
-            viewmodel.FillCategories = categories;
+            viewmodel.FillCategories = knownCategories;
             viewmodel.FillProducts = products;
-            viewmodel.FillParentCategory = parentCategory;
-            viewmodel.FillSelectCategory = category;
+            viewmodel.FillParentCategory = selectCategory.Parent;
+            viewmodel.FillSelectCategory = selectCategory;
             viewmodel.FillStores = stores;
 
             return View(viewmodel);
         }
-
-        //[RoleAttribute(9)]
+        [Role]
         public IActionResult Dashboard()
         {
             return View();
@@ -63,14 +87,9 @@ namespace DigiKala.Controllers
 
             if (bannerDetails.Count() > 0)
             {
-                string strToday = pc.GetYear(DateTime.Now).ToString("0000") + "/" +
-                                  pc.GetMonth(DateTime.Now).ToString("00") + "/" +
-                                  pc.GetDayOfMonth(DateTime.Now).ToString("00");
-
                 foreach (var item in bannerDetails)
                 {
-                    if (item.EndDate.CompareTo(strToday) < 0)
-                    {
+                    if (item.ExpireDateTime.CompareTo(DateTime.Now) < 0)       {
                         _temp.UpdateBannerExpire(item.Id);
                     }
                 }

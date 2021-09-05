@@ -16,6 +16,9 @@ using Microsoft.AspNetCore.Authorization;
 using System.Globalization;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting;
+using DigiKala.DataAccessLayer.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigiKala.Controllers
 {
@@ -24,13 +27,15 @@ namespace DigiKala.Controllers
     {
         private IUser _user;
         private IStore _store;
+        private DatabaseContext _context;
 
         private PersianCalendar pc = new PersianCalendar();
 
-        public PanelController(IUser user, IStore store)
+        public PanelController(IUser user, IStore store, DatabaseContext context)
         {
             _user = user;
             _store = store;
+            _context = context;
         }
 
         public IActionResult Dashboard()
@@ -38,49 +43,49 @@ namespace DigiKala.Controllers
             return View();
         }
 
-        public IActionResult Activate()
-        {
-            ViewBag.IsOK = false;
+        //public IActionResult Activate()
+        //{
+        //    ViewBag.IsOK = false;
 
-            return View();
-        }
+        //    return View();
+        //}
 
-        [HttpPost]
-        public IActionResult Activate(StoreActivateViewModel viewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                string username = User.Identity.Name;
+        //[HttpPost]
+        //public IActionResult Activate(StoreActivateViewModel viewModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        string username = User.Identity.Name;
 
-                Store store = _user.GetUserStore(username);
+        //        Store store = _user.GetUserStore(username);
 
-                if (_user.ExistsMobileActivate(username, viewModel.MobileCode))
-                {
-                    if (_user.ExistsMailActivate(username, viewModel.MailCode))
-                    {
+        //        if (_user.ExistsMobileActivate(username, viewModel.MobileCode))
+        //        {
+        //            if (_user.ExistsMailActivate(username, viewModel.MailCode))
+        //            {
 
-                        _user.ActiveMobileNumber(username);
-                        _user.ActiveMailAddress(store.Mail);
+        //                _user.ActiveMobileNumber(username);
+        //                _user.ActiveMailAddress(store.Mail);
 
-                        ViewBag.IsOK = true;
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("MailCode", "کد فعالسازی شما اشتباه است");
+        //                ViewBag.IsOK = true;
+        //            }
+        //            else
+        //            {
+        //                ModelState.AddModelError("MailCode", "کد فعالسازی شما اشتباه است");
 
-                        ViewBag.IsOK = false;
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("MobileCode", "کد فعالسازی شما اشتباه است");
+        //                ViewBag.IsOK = false;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError("MobileCode", "کد فعالسازی شما اشتباه است");
 
-                    ViewBag.IsOK = false;
-                }
-            }
+        //            ViewBag.IsOK = false;
+        //        }
+        //    }
 
-            return View(viewModel);
-        }
+        //    return View(viewModel);
+        //}
 
         public IActionResult Edit()
         {
@@ -119,17 +124,26 @@ namespace DigiKala.Controllers
                 }
                 else
                 {
-                    if (Path.GetExtension(viewModel.LogoImg.FileName) != ".jpg")
+                    if (viewModel.LogoImg.ContentType != "image/jpg" || viewModel.LogoImg.ContentType != "image/jpeg")
                     {
-                        ModelState.AddModelError("LogoImg", "فایل با پسوند jpg بارگزاری شود");
 
+                        ModelState.AddModelError("LogoImg", "فایل با پسوند jpg بارگزاری شود");
                         ViewBag.MyStatus = false;
                     }
+                    //if (Path.GetExtension(viewModel.LogoImg.FileName) != ".jpg")
+                    //{
+                    //    ModelState.AddModelError("LogoImg", "فایل با پسوند jpg بارگزاری شود");
+                    //    ViewBag.MyStatus = false;
+                    //}
                     else
                     {
                         string filePath = "";
                         viewModel.LogoName = CodeGenerators.FileCode() + Path.GetExtension(viewModel.LogoImg.FileName);
                         filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/users/stores/", viewModel.LogoName);
+
+                        string imagePath = store.Logo;
+                        if (System.IO.File.Exists(imagePath))
+                            System.IO.File.Delete(imagePath);
 
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
@@ -194,13 +208,11 @@ namespace DigiKala.Controllers
                         StoreCategory storeCategory = new StoreCategory()
                         {
                             CategoryId = viewModel.CategoryId,
-                            Date = pc.GetYear(DateTime.Now).ToString("0000") + "/" + pc.GetMonth(DateTime.Now).ToString("00") +
-                             "/" + pc.GetDayOfMonth(DateTime.Now).ToString("00"),
+                            DateTime = DateTime.Now,
                             Desc = null,
                             Img = viewModel.ImgName,
                             IsActive = false,
                             UserId = store.UserId,
-                            Time = pc.GetHour(DateTime.Now).ToString("00") + ":" + pc.GetMinute(DateTime.Now).ToString("00")
                         };
 
                         _store.AddStoreCategory(storeCategory);
@@ -213,13 +225,11 @@ namespace DigiKala.Controllers
                     StoreCategory storeCategory = new StoreCategory()
                     {
                         CategoryId = viewModel.CategoryId,
-                        Date = pc.GetYear(DateTime.Now).ToString("0000") + "/" + pc.GetMonth(DateTime.Now).ToString("00") +
-                             "/" + pc.GetDayOfMonth(DateTime.Now).ToString("00"),
+                        DateTime = DateTime.Now,
                         Desc = null,
                         Img = null,
                         IsActive = false,
                         UserId = store.UserId,
-                        Time = pc.GetHour(DateTime.Now).ToString("00") + ":" + pc.GetMinute(DateTime.Now).ToString("00")
                     };
 
                     _store.AddStoreCategory(storeCategory);
@@ -265,6 +275,9 @@ namespace DigiKala.Controllers
                         viewModel.ImgName = CodeGenerators.FileCode() + Path.GetExtension(viewModel.Img.FileName);
                         filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/users/stores/", viewModel.ImgName);
 
+                        string imagePath = storeCategory.Img;
+                        if (System.IO.File.Exists(imagePath))
+                            System.IO.File.Delete(imagePath);
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             viewModel.Img.CopyTo(stream);
@@ -408,27 +421,82 @@ namespace DigiKala.Controllers
 
         public IActionResult AddProduct()
         {
-            Store store = _user.GetUserStore(User.Identity.Name);
 
-            int id = _store.GetStoreCategoriesByStoreId(store.UserId).FirstOrDefault().Id;
 
-            StoreCategory storeCategory = _store.GetStoreCategory(id);
 
-            ViewBag.CategoryId = new SelectList(_store.GetCategories(storeCategory.CategoryId), "Id", "Name");
+            //Store store = _user.GetUserStore(User.Identity.Name);
+            //var cat = _store.GetStoreCategoriesByStoreId(store.UserId).FirstOrDefault();
+            //int id = cat == null ? 0 : cat.Id;
+            //StoreCategory storeCategory = _store.GetStoreCategory(id);
+            //ViewBag.CategoryId = new SelectList(_store.GetCategories(storeCategory.CategoryId), "Id", "Name");
+
+            var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+            List<Category> categories = _context.Categories.ToList();
+            List<int> knownIds = _context.StoreCategories.Where(sc => sc.UserId == userId).Select(sc => sc.CategoryId).ToList();
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].ParentId is null)
+                {
+                    if(!knownIds.Contains(categories[i].Id))
+                    {
+                        categories.RemoveAt(i);
+                        i--;
+                    }
+                    continue;
+                }
+                else if(!knownIds.Contains(categories[i].ParentId ?? 0))
+                {
+                    categories.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                knownIds.Add(categories[i].Id);
+            }
+            ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
             ViewBag.BrandId = new SelectList(_store.AllBrands(), "Id", "Name");
 
             return View();
         }
 
-        [HttpPost]        
+        [HttpPost]
         public IActionResult AddProduct(ProductViewModel viewModel)
         {
             string username = User.Identity.Name;
 
             Store store = _user.GetUserStore(username);
 
+            var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+            List<Category> categories = _context.Categories.ToList();
+            List<int> knownIds = _context.StoreCategories.Where(sc => sc.UserId == userId).Select(sc => sc.CategoryId).ToList();
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].ParentId is null)
+                {
+                    if (!knownIds.Contains(categories[i].Id))
+                    {
+                        categories.RemoveAt(i);
+                        i--;
+                    }
+                    continue;
+                }
+                else if (!knownIds.Contains(categories[i].ParentId ?? 0))
+                {
+                    categories.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                knownIds.Add(categories[i].Id);
+            }
+
             if (ModelState.IsValid)
             {
+                if(!knownIds.Contains(viewModel.CategoryId))
+                {
+                    ModelState.AddModelError("CategoryId", "لطفا دسته بندی صحیح را وارد کنید");
+                    ViewBag.CategoryId = new SelectList(categories, "Id", "Name", viewModel.CategoryId);
+                    ViewBag.BrandId = new SelectList(_store.AllBrands(), "Id", "Name", viewModel.BrandId);
+                    return View(viewModel);
+                }
                 if (viewModel.Img != null)
                 {
                     if (Path.GetExtension(viewModel.Img.FileName) != ".jpg")
@@ -451,9 +519,7 @@ namespace DigiKala.Controllers
                             Img = viewModel.ImgName,
                             BrandId = viewModel.BrandId,
                             CategoryId = viewModel.CategoryId,
-                            Date = pc.GetYear(DateTime.Now).ToString("0000") + "/" + pc.GetMonth(DateTime.Now).ToString("00") +
-                         "/" + pc.GetDayOfMonth(DateTime.Now).ToString("00"),
-                            Time = pc.GetHour(DateTime.Now).ToString("00") + ":" + pc.GetMinute(DateTime.Now).ToString("00"),
+                            DateTime = DateTime.Now,
                             DeletePrice = viewModel.DeletePrice,
                             Exist = viewModel.Exist,
                             Desc = viewModel.Desc,
@@ -470,11 +536,8 @@ namespace DigiKala.Controllers
                 }
             }
 
-            int id = _store.GetStoreCategoriesByStoreId(store.UserId).FirstOrDefault().Id;
-
-            StoreCategory storeCategory = _store.GetStoreCategory(id);
-
-            ViewBag.CategoryId = new SelectList(_store.GetCategories(storeCategory.CategoryId), "Id", "Name", viewModel.CategoryId);
+           
+            ViewBag.CategoryId = new SelectList(categories, "Id", "Name",viewModel.CategoryId);
             ViewBag.BrandId = new SelectList(_store.AllBrands(), "Id", "Name", viewModel.BrandId);
 
             return View(viewModel);
@@ -482,16 +545,35 @@ namespace DigiKala.Controllers
 
         public IActionResult EditProduct(int id)
         {
-            Store store = _user.GetUserStore(User.Identity.Name);
+            var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+            List<Category> categories = _context.Categories.ToList();
+            List<int> knownIds = _context.StoreCategories.Where(sc => sc.UserId == userId).Select(sc => sc.CategoryId).ToList();
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].ParentId is null)
+                {
+                    if (!knownIds.Contains(categories[i].Id))
+                    {
+                        categories.RemoveAt(i);
+                        i--;
+                    }
+                    continue;
+                }
+                else if (!knownIds.Contains(categories[i].ParentId ?? 0))
+                {
+                    categories.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                knownIds.Add(categories[i].Id);
+            }
+            Product product = _store.GetProduct(id);
 
-            int cid = _store.GetStoreCategoriesByStoreId(store.UserId).FirstOrDefault().Id;
+            ViewBag.CategoryId = new SelectList(categories, "Id", "Name",product.Category);
 
-            StoreCategory storeCategory = _store.GetStoreCategory(cid);
-
-            ViewBag.CategoryId = new SelectList(_store.GetCategories(storeCategory.CategoryId), "Id", "Name");
             ViewBag.BrandId = new SelectList(_store.AllBrands(), "Id", "Name");
 
-            Product product = _store.GetProduct(id);
+           
 
             ProductViewModel viewModel = new ProductViewModel()
             {
@@ -502,8 +584,8 @@ namespace DigiKala.Controllers
                 Desc = product.Desc,
                 ImgName = product.Img,
                 Name = product.Name,
-                 NotShow = product.NotShow,
-                 Price = product.Price
+                NotShow = product.NotShow,
+                Price = product.Price
             };
 
             return View(viewModel);
@@ -515,9 +597,39 @@ namespace DigiKala.Controllers
             string username = User.Identity.Name;
 
             Store store = _user.GetUserStore(username);
+            var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+            List<Category> categories = _context.Categories.ToList();
+            List<int> knownIds = _context.StoreCategories.Where(sc => sc.UserId == userId).Select(sc => sc.CategoryId).ToList();
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].ParentId is null)
+                {
+                    if (!knownIds.Contains(categories[i].Id))
+                    {
+                        categories.RemoveAt(i);
+                        i--;
+                    }
+                    continue;
+                }
+                else if (!knownIds.Contains(categories[i].ParentId ?? 0))
+                {
+                    categories.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                knownIds.Add(categories[i].Id);
+            }
+            ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
 
             if (ModelState.IsValid)
             {
+                if (!knownIds.Contains(viewModel.CategoryId))
+                {
+                    ModelState.AddModelError("CategoryId", "لطفا دسته بندی صحیح را وارد کنید");
+                    ViewBag.CategoryId = new SelectList(categories, "Id", "Name", viewModel.CategoryId);
+                    ViewBag.BrandId = new SelectList(_store.AllBrands(), "Id", "Name", viewModel.BrandId);
+                    return View(viewModel);
+                }
                 Product product = _store.GetProduct(id);
 
                 if (viewModel.Img != null)
@@ -531,7 +643,9 @@ namespace DigiKala.Controllers
                         string filePath = "";
                         viewModel.ImgName = CodeGenerators.FileCode() + Path.GetExtension(viewModel.Img.FileName);
                         filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products/", viewModel.ImgName);
-
+                        string imagePath = product.Img;
+                        if (System.IO.File.Exists(imagePath))
+                            System.IO.File.Delete(imagePath);
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             viewModel.Img.CopyTo(stream);
@@ -613,7 +727,7 @@ namespace DigiKala.Controllers
                         Img = viewModel.ImgName
                     };
 
-                    _store.AddGallery(productGallery);      
+                    _store.AddGallery(productGallery);
                 }
             }
 
@@ -709,9 +823,25 @@ namespace DigiKala.Controllers
 
             Store store = _user.GetUserStore(username);
 
-            List<Coupon> coupons = _store.GetCoupons(store.UserId);
+            var coupons = _store.GetCoupons(store.UserId);
+            List<StoreCouponViewModel> storeCouponViewModel = new List<StoreCouponViewModel>();
+            foreach (var item in coupons)
+            {
+                storeCouponViewModel.Add(new StoreCouponViewModel()
+                {
+                    Id = item.Id,
+                    Code = item.Code,
+                    Desc = item.Desc,
+                    EndDate = pc.GetYear(item.ExpireDateTime) + "/" + pc.GetMonth(item.ExpireDateTime) + "/" + pc.GetDayOfMonth(item.ExpireDateTime),
+                    IsExpire = item.IsExpire,
+                    Name = item.Name,
+                    Percent = item.Percent,
+                    Price = item.Price,
+                    StartDate = pc.GetYear(item.StartDateTime) + "/" + pc.GetMonth(item.StartDateTime) + "/" + pc.GetDayOfMonth(item.StartDateTime)
+                });
+            }
 
-            return View(coupons);
+            return View(storeCouponViewModel);
         }
 
         public IActionResult AddCoupon()
@@ -739,17 +869,24 @@ namespace DigiKala.Controllers
 
                     Store store = _user.GetUserStore(username);
 
+                    string[] StartDate = viewModel.StartDate.Split("/");
+                    string[] EndDate = viewModel.EndDate.Split("/");
+                    for (int i = 0; i < StartDate.Length; i++)
+                    {
+                        StartDate[i] = StartDate[i].Replace("/", "");
+                        EndDate[i] = EndDate[i].Replace("/", "");
+                    }
                     Coupon coupon = new Coupon()
                     {
                         Code = viewModel.Code,
                         Desc = viewModel.Desc,
-                        EndDate = viewModel.EndDate,
+                        ExpireDateTime = pc.ToDateTime(Convert.ToInt32(EndDate[0]), Convert.ToInt32(EndDate[1]), Convert.ToInt32(EndDate[2]), 0, 0, 0, 0),
                         IsExpire = false,
                         StoreId = store.UserId,
                         Name = viewModel.Name,
                         Percent = viewModel.Percent,
                         Price = viewModel.Price,
-                        StartDate = viewModel.StartDate                        
+                        StartDateTime = pc.ToDateTime(Convert.ToInt32(StartDate[0]), Convert.ToInt32(StartDate[1]), Convert.ToInt32(StartDate[2]), 0, 0, 0, 0)
                     };
 
                     _store.AddCoupon(coupon);
@@ -765,15 +902,17 @@ namespace DigiKala.Controllers
         {
             Coupon coupon = _store.GetCoupon(id);
 
+
+
             StoreCouponViewModel viewModel = new StoreCouponViewModel()
             {
                 Code = coupon.Code,
                 Desc = coupon.Desc,
-                EndDate = coupon.EndDate,
+                EndDate = pc.GetYear(coupon.ExpireDateTime).ToString("0000") + "/" + pc.GetMonth(coupon.ExpireDateTime).ToString("00") + "/" + pc.GetDayOfMonth(coupon.ExpireDateTime).ToString("00"),
                 Name = coupon.Name,
                 Percent = coupon.Percent,
                 Price = coupon.Price,
-                StartDate = coupon.StartDate
+                StartDate = pc.GetYear(coupon.StartDateTime).ToString("0000") + "/" + pc.GetMonth(coupon.StartDateTime).ToString("00") + "/" + pc.GetDayOfMonth(coupon.StartDateTime).ToString("00"),
             };
 
             return View(viewModel);
@@ -785,9 +924,19 @@ namespace DigiKala.Controllers
             if (ModelState.IsValid)
             {
                 Coupon coupon = _store.GetCoupon(id);
+                string[] StartDate = viewModel.StartDate.Split("/");
+                string[] EndDate = viewModel.EndDate.Split("/");
+                for (int i = 0; i < StartDate.Length; i++)
+                {
+                    StartDate[i] = StartDate[i].Replace("/", "");
+                    EndDate[i] = EndDate[i].Replace("/", "");
+                }
 
+
+                DateTime sdate = pc.ToDateTime(Convert.ToInt32(StartDate[0]), Convert.ToInt32(StartDate[1]), Convert.ToInt32(StartDate[2]), 0, 0, 0, 0);
+                DateTime edate = pc.ToDateTime(Convert.ToInt32(EndDate[0]), Convert.ToInt32(EndDate[1]), Convert.ToInt32(EndDate[2]), 0, 0, 0, 0);
                 _store.UpdateCoupon(id, viewModel.Name, viewModel.Code, viewModel.IsExpire, viewModel.Desc,
-                    viewModel.StartDate, viewModel.EndDate, viewModel.Percent, viewModel.Price);
+                    sdate, edate, viewModel.Percent, viewModel.Price);
 
                 return RedirectToAction(nameof(ShowCoupons));
             }
@@ -798,8 +947,19 @@ namespace DigiKala.Controllers
         public IActionResult DetailsCoupon(int id)
         {
             Coupon coupon = _store.GetCoupon(id);
-
-            return View(coupon);
+            StoreCouponViewModel storeCouponViewModel = new StoreCouponViewModel()
+            {
+                Id = coupon.Id,
+                Code = coupon.Code,
+                Desc = coupon.Desc,
+                EndDate = pc.GetYear(coupon.ExpireDateTime) + "/" + pc.GetMonth(coupon.ExpireDateTime) + "/" + pc.GetDayOfMonth(coupon.ExpireDateTime),
+                IsExpire = coupon.IsExpire,
+                Name = coupon.Name,
+                Percent = coupon.Percent,
+                Price = coupon.Price,
+                StartDate = pc.GetYear(coupon.StartDateTime) + "/" + pc.GetMonth(coupon.StartDateTime) + "/" + pc.GetDayOfMonth(coupon.StartDateTime)
+            };
+            return View(storeCouponViewModel);
         }
 
         public IActionResult DeleteCoupon(int? id)

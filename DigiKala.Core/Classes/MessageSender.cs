@@ -13,18 +13,21 @@ using DigiKala.DataAccessLayer.Entities;
 
 using Kavenegar;
 using Microsoft.AspNetCore.Mvc.Filters;
+using DigiKala.DataAccessLayer.Context;
 
 namespace DigiKala.Core.Classes
 {    
     public class MessageSender
     {
-        private IAdmin _admin;
+        private readonly IAdmin _admin;
 
-        AuthorizationFilterContext context;
-
+        public MessageSender( IAdmin admin)
+        {
+            _admin = admin;
+        }
         public void SMS(string to, string body)
         {
-            _admin = (IAdmin)context.HttpContext.RequestServices.GetService(typeof(IAdmin));
+            //_admin = (IAdmin)context.RequestServices.GetService(typeof(IAdmin));
 
             Setting setting = _admin.GetSetting();
 
@@ -38,7 +41,7 @@ namespace DigiKala.Core.Classes
 
         public void Email(string to, string subject, string body)
         {
-            _admin = (IAdmin)context.HttpContext.RequestServices.GetService(typeof(IAdmin));
+            //_admin = (IAdmin)context.HttpContext.RequestServices.GetService(typeof(IAdmin));
 
             Setting setting = _admin.GetSetting();
 

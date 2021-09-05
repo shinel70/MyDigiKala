@@ -16,19 +16,31 @@
                 <ul class="catalog-list">
 
                     <li>
-                        <a href="#" class="catalog-link">@Model.FillParentCategory.Name</a>
+                        @if (Model.FillParentCategory == null)
+                        {
+                        }
+                        else
+                        {
+                            <a href="/Home/SearchByCategory/@Model.FillParentCategory.Name" class="catalog-link">@Model.FillParentCategory.Name</a>
+                        }
 
                         <div class="show-more">
 
-                            <span class="catalog-cat-item">@Model.FillSelectCategory.Name</span>
+                            @*<span class="catalog-cat-item">@Model.FillSelectCategory.Name</span>*@
 
                             <ul class="catalog-list">
 
                                 <li>
-
-                                    @foreach (var item in Model.FillCategories.Where(c => c.Id != Model.FillSelectCategory.Id))
+                                    @foreach (var item in Model.FillCategories)
                                     {
-                                        <a href="/Home/SearchByCategory/@item.Id" class="catalog-link">@item.Name</a>
+                                        @if (item.Id == Model.FillSelectCategory.Id)
+                                        {
+                                            <a class="catalog-link btn-info">@item.Name</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/Home/SearchByCategory/@item.Name" class="catalog-link">@item.Name</a>
+                                        }
                                     }
 
                                 </li>
@@ -106,7 +118,7 @@
 
         </div>
 
-    </div>    
+    </div>
 
 </div>
 
@@ -143,9 +155,7 @@
                                     <span class="product-box-row">@item.Price.ToString("n0") ریال</span>
 
                                 </div>
-
                             </div>
-
                         </div>
                     }
 

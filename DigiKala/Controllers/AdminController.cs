@@ -17,24 +17,27 @@ using System.Globalization;
 using X.PagedList;
 using System.Reflection;
 using System.IO;
+using DigiKala.DataAccessLayer.Context;
 
 namespace DigiKala.Controllers
 {
-    [Authorize]
+    [Role]
     public class AdminController : Controller
     {
         private IAdmin _admin;
+        private DatabaseContext _context;
         private PersianCalendar pc = new PersianCalendar();
 
-        public AdminController(IAdmin admin)
+        public AdminController(IAdmin admin, DatabaseContext context)
         {
             _admin = admin;
+            _context = context;
         }
 
         public IActionResult ShowActiveStores()
         {
-            List<Store> stores = _admin.GetActiveStores();
-
+            //List<Store> stores = _admin.GetActiveStores;
+            List<Store> stores = _context.Stores.Include(s => s.User).OrderByDescending(s => s.UserId).ToList();
             return View(stores);
         }
 
@@ -96,84 +99,186 @@ namespace DigiKala.Controllers
             return View(viewModel);
         }
 
-        public IActionResult Permissions(int? page)
+        public IActionResult ShowRolePermissions(int? page)
         {
             //List<Permission> permissions = _admin.GetPermissions();
 
-            int pageSize = 5;
+            int pageSize = 10;
             var pageNumber = page ?? 1;
-            var permissions = _admin.GetPermissions().ToPagedList(pageNumber, pageSize);
+            var permissions = _context.Roles.OrderBy(i => i.Id).ToPagedList(pageNumber, pageSize);
 
             ViewBag.MyModels = permissions;
 
             return View();
         }
 
-        public IActionResult AddPermission()
+        public IActionResult AddRolePermissions()
         {
+            //var t = _context.Permissions.ToList().GroupBy(p => p.Controller).ToDictionary(p => p.Key, p=> p.ToList());
+            var t = _context.Permissions.ToList().GroupBy(p => p.Controller).ToList();
+            ViewBag.MyModel = t;
             return View();
         }
 
         [HttpPost]
-        public IActionResult AddPermission(PermissionViewModel viewModel)
+        public IActionResult AddRolePermissions(AddRolePermissionsViewModel viewModel)
         {
+            ViewBag.MyModel = _context.Permissions.ToList().GroupBy(p => p.Controller).ToList();
             if (ModelState.IsValid)
             {
-                Permission permission = new Permission()
+                if (_context.Roles.Any(r => r.Name == viewModel.Role.Name))
                 {
-                    Name = viewModel.Name
-                };
-
-                _admin.InsertPermission(permission);
-
-                return RedirectToAction(nameof(Permissions));
+                    ModelState.AddModelError("Role.Name", "این نقش در سیستم وجود دارد لطفا نام دیگری انتخاب کنید");
+                    return View(viewModel);
+                }
+                viewModel.Role.RolePermissions = new List<RolePermission>();
+                foreach (var permissionId in viewModel.PermissionIds)
+                {
+                    viewModel.Role.RolePermissions.Add(new RolePermission() { PermissionId = permissionId });
+                }
+                _context.Add(viewModel.Role);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(ShowRolePermissions));
             }
 
             return View(viewModel);
         }
 
-        public IActionResult EditPermission(int id)
+        public IActionResult EditRolePermissions(int id)
         {
-            Permission permission = _admin.GetPermission(id);
-
-            PermissionViewModel viewModel = new PermissionViewModel()
+            ViewBag.MyModel = _context.Permissions.ToList().GroupBy(p => p.Controller).ToList();
+            var viewModel = new AddRolePermissionsViewModel()
             {
-                Name = permission.Name
+                Role = _context.Roles.Include(r => r.RolePermissions).FirstOrDefault(r => r.Id == id)
             };
-
             return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult EditPermission(int id, PermissionViewModel viewModel)
+        public IActionResult EditRolePermissions(AddRolePermissionsViewModel viewModel)
         {
+            ViewBag.MyModel = _context.Permissions.ToList().GroupBy(p => p.Controller).ToList();
             if (ModelState.IsValid)
             {
-                _admin.UpdatePermission(id, viewModel.Name);
-
-                return RedirectToAction(nameof(Permissions));
+                if (_context.Roles.Any(r => r.Name == viewModel.Role.Name && r.Id != viewModel.Role.Id))
+                {
+                    ModelState.AddModelError("Role.Name", "این نقش در سیستم وجود دارد لطفا نام دیگری انتخاب کنید");
+                    return View(viewModel);
+                }
+                var rolePermissions = _context.RolePermissions.Where(rp => rp.RoleId == viewModel.Role.Id).ToList();
+                _context.RolePermissions.RemoveRange(rolePermissions);
+                viewModel.Role.RolePermissions = new List<RolePermission>();
+                foreach (var permissionId in viewModel.PermissionIds)
+                {
+                    viewModel.Role.RolePermissions.Add(new RolePermission() { PermissionId = permissionId });
+                }
+               // var role = _context.Roles.Find(viewModel.Role.Id);
+               // role = viewModel.Role;
+                _context.Update(viewModel.Role);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(ShowRolePermissions));
             }
 
             return View(viewModel);
         }
 
-        public IActionResult DeletePermission(int? id)
+        public IActionResult DeleteRolePermissions(int? id)
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult DeletePermission(int id)
+        public IActionResult DeleteRolePermissions(int id)
         {
             if (ModelState.IsValid)
             {
-                _admin.DeletePermission(id);
-
-                return RedirectToAction(nameof(Permissions));
+                var role = _context.Roles.Find(id);
+                _context.Roles.Remove(role);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(ShowRolePermissions));
             }
 
             return View();
         }
+
+        //public IActionResult Permissions(int? page)
+        //{
+        //    //List<Permission> permissions = _admin.GetPermissions();
+
+        //    int pageSize = 5;
+        //    var pageNumber = page ?? 1;
+        //    var permissions = _admin.GetPermissions().ToPagedList(pageNumber, pageSize);
+
+        //    ViewBag.MyModels = permissions;
+
+        //    return View();
+        //}
+
+        //public IActionResult AddPermission()
+        //{
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public IActionResult AddPermission(PermissionViewModel viewModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        Permission permission = new Permission()
+        //        {
+        //            Name = viewModel.Name
+        //        };
+
+        //        _admin.InsertPermission(permission);
+
+        //        return RedirectToAction(nameof(Permissions));
+        //    }
+
+        //    return View(viewModel);
+        //}
+
+        //public IActionResult EditPermission(int id)
+        //{
+        //    Permission permission = _admin.GetPermission(id);
+
+        //    PermissionViewModel viewModel = new PermissionViewModel()
+        //    {
+        //        Name = permission.Name
+        //    };
+
+        //    return View(viewModel);
+        //}
+
+        //[HttpPost]
+        //public IActionResult EditPermission(int id, PermissionViewModel viewModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _admin.UpdatePermission(id, viewModel.Name);
+
+        //        return RedirectToAction(nameof(Permissions));
+        //    }
+
+        //    return View(viewModel);
+        //}
+
+        //public IActionResult DeletePermission(int? id)
+        //{
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public IActionResult DeletePermission(int id)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _admin.DeletePermission(id);
+
+        //        return RedirectToAction(nameof(Permissions));
+        //    }
+
+        //    return View();
+        //}
 
         public IActionResult Categories()
         {
@@ -229,7 +334,7 @@ namespace DigiKala.Controllers
 
                     if (category1.ParentId == null)
                     {
-                        return Redirect("/Admin/SubCategories/" + parentID);
+                        return Redirect("/Admin/Categories/" + parentID);
                     }
                     else
                     {
@@ -631,8 +736,8 @@ namespace DigiKala.Controllers
 
         public IActionResult ShowAllProducts()
         {
-            List<Product> products = _admin.GetProducts();
-
+            List<Product> products = new List<Product>();
+            products = _admin.GetProducts();
             return View(products);
         }
 
@@ -774,7 +879,7 @@ namespace DigiKala.Controllers
                         sliderImg = viewModel.ImgName;
                     }
                 }
-                
+
                 _admin.UpdateSlider(id, viewModel.Title, sliderImg, viewModel.Desc, viewModel.NotShow, viewModel.OrderShow);
 
                 return RedirectToAction(nameof(ShowSliders));
@@ -829,7 +934,7 @@ namespace DigiKala.Controllers
                 Name = banner.Name,
                 Price = banner.Price,
                 Size = banner.Size
-                
+
             };
 
             return View(viewModel);
@@ -917,7 +1022,7 @@ namespace DigiKala.Controllers
         }
 
         public IActionResult AddBannerDetails(int id)
-        {            
+        {
             return View();
         }
 
@@ -950,16 +1055,20 @@ namespace DigiKala.Controllers
                 }
 
                 // 1399/09/14
-                string strToday = pc.GetYear(DateTime.Now).ToString("0000") + "/" +
-                                pc.GetMonth(DateTime.Now).ToString("00") + "/" +
-                                pc.GetDayOfMonth(DateTime.Now).ToString("00");
+                //string strToday = pc.GetYear(DateTime.Now).ToString("0000") + "/" +
+                //                pc.GetMonth(DateTime.Now).ToString("00") + "/" +
+                //                pc.GetDayOfMonth(DateTime.Now).ToString("00");
 
                 Banner banner = _admin.GetBanner(id);
 
-                DateTime dt = pc.ToDateTime(Convert.ToInt32(strToday.Substring(0, 4)), Convert.ToInt32(strToday.Substring(5, 2)),
-                    Convert.ToInt32(strToday.Substring(8, 2)), 0, 0, 0, 0);
+                //DateTime dt = pc.ToDateTime(Convert.ToInt32(strToday.Substring(0, 4)), Convert.ToInt32(strToday.Substring(5, 2)),
+                //    Convert.ToInt32(strToday.Substring(8, 2)), 0, 0, 0, 0);
 
-                DateTime dtExpire = dt.AddDays(Convert.ToDouble(banner.Day));
+                DateTime dt = DateTime.Now;
+
+                //DateTime dtExpire = dt.AddDays(Convert.ToDouble(banner.Day));
+
+
 
                 BannerDetails bannerDetails = new BannerDetails()
                 {
@@ -967,10 +1076,8 @@ namespace DigiKala.Controllers
                     Img = bannerImg,
                     Title = viewModel.Name,
                     IsExpire = false,
-                    StartDate = strToday,
-                    EndDate = pc.GetYear(dtExpire).ToString("0000") + "/" +
-                                pc.GetMonth(dtExpire).ToString("00") + "/" +
-                                pc.GetDayOfMonth(dtExpire).ToString("00"),
+                    StartDateTime = dt,
+                    ExpireDateTime = dt.AddDays(1),
                     Url = viewModel.Url
                 };
 

@@ -39,17 +39,6 @@ namespace DigiKala.DataAccessLayer.Entities
         [DataType(DataType.MultilineText)]
         public string Desc { get; set; }
 
-        [Display(Name = "فعالسازی موبایل")]
-        public bool MobileActivate { get; set; }
-
-        [Display(Name = "فعالسازی ایمیل")]
-        public bool MailActivate { get; set; }
-
-        [Display(Name = "کد")]
-        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
-        [MaxLength(6, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string MailActivateCode { get; set; }
-
         [Display(Name = "موجودی")]
         public long Wallet { get; set; }
 

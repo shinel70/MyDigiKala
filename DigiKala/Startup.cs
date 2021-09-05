@@ -58,6 +58,8 @@ namespace DigiKala
 
             services.AddScoped<PanelLayoutScope>();
             services.AddScoped<TemplateScope>();
+            services.AddScoped<MessageSender>();
+            services.AddSession(option => { option.IdleTimeout = TimeSpan.FromDays(7);option.Cookie.HttpOnly = true;option.Cookie.IsEssential = true; });
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
@@ -75,7 +77,7 @@ namespace DigiKala
                        
             app.UseRouting();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context =>

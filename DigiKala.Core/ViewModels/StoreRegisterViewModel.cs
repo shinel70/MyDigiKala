@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DigiKala.Core.ViewModels
 {
@@ -19,6 +20,16 @@ namespace DigiKala.Core.ViewModels
         [MinLength(11, ErrorMessage = "مقدار {0} نباید کم تر از {1} کاراکتر باشد")]
         [Phone(ErrorMessage = "فقط عدد می توانید وارد کنید")]
         public string Mobile { get; set; }
+        [Display(Name = "کد فعال سازی موبایل")]
+        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
+        [MaxLength(6, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
+        [DataType(DataType.PhoneNumber, ErrorMessage = "فقط عدد میتوانید وارد کنید")]
+        public string ActiveMobileCode { get; set; }
+        [Display(Name = "کد فعال سازی ایمیل")]
+        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
+        [MaxLength(6, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
+        [DataType(DataType.PhoneNumber, ErrorMessage = "فقط عدد میتوانید وارد کنید")]
+        public string ActiveEmailCode { get; set; }
 
         [Display(Name = "کلمه عبور")]
         [Required(ErrorMessage = "نباید بدون مقدار باشد")]

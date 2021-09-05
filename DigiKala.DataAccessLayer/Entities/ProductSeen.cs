@@ -14,13 +14,9 @@ namespace DigiKala.DataAccessLayer.Entities
 
         public int ProductId { get; set; }
 
-        [Display(Name = "تاریخ")]
-        [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string Date { get; set; }
-
-        [Display(Name = "زمان")]
-        [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string Time { get; set; }
+        [Display(Name = "تاریخ و زمان عضویت")]
+        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
+        public DateTime DateTime { get; set; }
 
         [Display(Name = "IP")]
         [MaxLength(30, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]

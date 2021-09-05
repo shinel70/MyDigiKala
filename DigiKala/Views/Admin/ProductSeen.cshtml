@@ -21,10 +21,7 @@
             <tr>
 
                 <th>
-                    @Html.DisplayNameFor(model => model.Date)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Time)
+                    @Html.DisplayNameFor(model => model.DateTime)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.IP)
@@ -40,11 +37,9 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Date)
+                        @Html.DisplayFor(modelItem => item.DateTime)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Time)
-                    </td>
+
                     <td>
                         @Html.DisplayFor(modelItem => item.IP)
                     </td>

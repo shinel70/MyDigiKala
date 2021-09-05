@@ -1,0 +1,51 @@
+﻿@using DigiKala.DataAccessLayer.Entities
+@model DigiKala.Core.ViewModels.AddRolePermissionsViewModel
+
+@{
+    Layout = null;
+    //Dictionary<string, List<Permission>> permissions = ViewBag.MyModel;
+    List<IGrouping<string, Permission>> permissions = ViewBag.MyModel;
+}
+
+<h4 class="text-center">ثبت دسترسی جدید</h4>
+<hr />
+<div class="row">
+    <div class="col-lg-12">
+        <form asp-action="AddRolePermissions">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Role.Name" class="form-control" placeholder="نام نقش" />
+                <span asp-validation-for="Role.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    @foreach (var item in permissions)
+                    {
+                        <br />
+                        <div class="col-md-12 col-sm-12">
+                            <input type="checkbox" Id="@item.Key" onclick="ToggleAll(this)" />
+                            @if(item.Key == "Admin")
+                            {
+                            <span>دسترسی های مدیر</span>
+                            }
+                            else
+                            {
+                            <span>دسترسی های فروشگاه</span>
+                            }
+                        </div>
+                        @foreach (var permission in item)
+                        {
+                            <div class="col-md-6 col-sm-12">
+                                <input type="checkbox" onclick="CheckAll(this)" class="@permission.Controller" name="PermissionIds" value="@permission.Id" />
+                                <span>@permission.Name</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="ثبت شود" class="btn btn-success btn-block" />
+            </div>
+        </form>
+    </div>
+</div>

@@ -126,10 +126,10 @@ namespace DigiKala.Core.Services
             }
         }
 
-        public List<Store> GetActiveStores()
-        {
-            return _context.Stores.Include(s => s.User).Where(s => s.MobileActivate == true && s.MailActivate == true).OrderByDescending(s => s.UserId).ToList();
-        }
+        //public List<Store> GetActiveStores()
+        //{
+        //    return _context.Stores.Include(s => s.User).Where(s => s.MobileActivate == true && s.MailActivate == true).OrderByDescending(s => s.UserId).ToList();
+        //}
 
         public Banner GetBanner(int id)
         {
@@ -297,11 +297,11 @@ namespace DigiKala.Core.Services
             _context.SaveChanges();
         }
 
-        public void InsertPermission(Permission permission)
-        {
-            _context.Permissions.Add(permission);
-            _context.SaveChanges();
-        }
+        //public void InsertPermission(Permission permission)
+        //{
+        //    _context.Permissions.Add(permission);
+        //    _context.SaveChanges();
+        //}
 
         public void InsertSetting(Setting setting)
         {

@@ -25,6 +25,7 @@ namespace DigiKala.DataAccessLayer.Entities
         public string Icon { get; set; }
 
         public virtual Category Parent { get; set; }
+        public virtual ICollection<Category> SubCategories { get; set; }
 
         public virtual ICollection<StoreCategory> StoreCategories { get; set; }
 

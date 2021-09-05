@@ -72,7 +72,9 @@ namespace DigiKala.Core.Services
         public void DeleteGallery(int id)
         {
             ProductGallery productGallery = _context.ProductGalleries.Find(id);
-
+            string imagePath = productGallery.Img;
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
             _context.ProductGalleries.Remove(productGallery);
             _context.SaveChanges();
 
@@ -81,7 +83,9 @@ namespace DigiKala.Core.Services
         public void DeleteProduct(int id)
         {
             Product product = _context.Products.Find(id);
-
+            string imagePath = product.Img;
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
             _context.Products.Remove(product);
             _context.SaveChanges();
         }
@@ -89,7 +93,9 @@ namespace DigiKala.Core.Services
         public void DeleteStoreCategory(int id)
         {
             StoreCategory storeCategory = _context.StoreCategories.Find(id);
-
+            string imagePath = storeCategory.Img;
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
             _context.StoreCategories.Remove(storeCategory);
             _context.SaveChanges();
         }
@@ -205,7 +211,7 @@ namespace DigiKala.Core.Services
             _context.SaveChanges();
         }
 
-        public void UpdateCoupon(int id, string name, string code, bool expire, string desc, string start, string end, int percent, int price)
+        public void UpdateCoupon(int id, string name, string code, bool expire, string desc, DateTime start, DateTime end, int percent, int price)
         {
             Coupon coupon = _context.Coupons.Find(id);
 
@@ -214,11 +220,11 @@ namespace DigiKala.Core.Services
                 coupon.Code = code;
             }
 
-            coupon.Name = name;            
+            coupon.Name = name;
             coupon.IsExpire = expire;
             coupon.Desc = desc;
-            coupon.StartDate = start;
-            coupon.EndDate = end;
+            coupon.StartDateTime = start;
+            coupon.ExpireDateTime = end;
             coupon.Price = price;
             coupon.Percent = percent;
 

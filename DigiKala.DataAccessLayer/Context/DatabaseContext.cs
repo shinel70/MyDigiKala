@@ -34,5 +34,6 @@ namespace DigiKala.DataAccessLayer.Context
         public DbSet<Slider> Sliders { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<BannerDetails> BannerDetails { get; set; }
+        public DbSet<TemporaryCode> TemporaryCodes { get; set; }
     }
 }

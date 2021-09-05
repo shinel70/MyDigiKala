@@ -1859,6 +1859,7 @@ ul.listing-sort {
 }
 
     .child-product-pic img {
+
         width: 100%;
         -webkit-filter: blur(2px);
         filter: blur(2px);

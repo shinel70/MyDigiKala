@@ -2,9 +2,11 @@
 
 @foreach (var item in Model)
 {
-<div class="col-md-2">
-    <h4 class="row mega-title">@item.Name</h4>
+    <div class="col-md-2">
+        <h4 class="row btn btn-block mega-title">
+            <a class="nav nav-link" href="/home/SearchByCategory/@item.Name">@item.Name</a>
+        </h4>
 
-    @(await Component.InvokeAsync("SubMenuComponent", item.Id))
-</div>
+        @(await Component.InvokeAsync("SubMenuComponent", item.Id))
+    </div>
 }

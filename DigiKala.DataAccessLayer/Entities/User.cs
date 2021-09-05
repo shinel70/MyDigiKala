@@ -32,18 +32,12 @@ namespace DigiKala.DataAccessLayer.Entities
         [MaxLength(100, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
         public string FullName { get; set; }
 
-        [Display(Name = "کد")]
-        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
-        [MaxLength(6, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string ActiveCode { get; set; }
-
         [Display(Name = "فعال")]
         public bool IsActive { get; set; }
 
-        [Display(Name = "تاریخ عضویت")]
+        [Display(Name = "تاریخ و زمان عضویت")]
         [Required(ErrorMessage = "نباید بدون مقدار باشد")]
-        [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string Date { get; set; }
+        public DateTime DateTime { get; set; }
 
         public virtual Role Role { get; set; }
 

@@ -1,5 +1,5 @@
-﻿@model DigiKala.Core.ViewModels.StoreRegisterViewModel
-
+﻿@using DigiKala.Core.ViewModels
+@model StoreRegisterViewModel
 @{
     ViewData["Title"] = "ثبت درخواست فروشگاه";
     Layout = "~/Views/Shared/_Account.cshtml";
@@ -15,19 +15,34 @@
         <div class="form-group" style="margin-top: 20px; margin-bottom: 20px;">
             <div class="alert alert-success text-center">
                 <h5 class="text-center">
-                    ثبت درخواست شما انجام شد، پس از تایید شماره موبایل و ایمیل امکان استفاده را خواهید داشت
+                    فروشگاه شما با موفقیت ثبت شد پس از ارسال مدارک در پنل شما میتوانید در دسته بندی مربوطه کالا ارائه دهید.
                 </h5>
             </div>
         </div>
     }
 
     <div class="form-group">
-        <input asp-for="Mobile" class="form-control input-lg" placeholder="شماره موبایل" />
+        <input asp-for="Mobile" id="mobile" class="form-control input-lg" placeholder="شماره موبایل" />
         <span asp-validation-for="Mobile" class="text-danger validation-error"></span>
     </div>
     <div class="form-group">
-        <input asp-for="Mail" class="form-control input-lg" placeholder="ایمیل" />
+        <input asp-for="Mail" id="mail" class="form-control input-lg" placeholder="ایمیل" />
         <span asp-validation-for="Mail" class="text-danger validation-error"></span>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-4 col-sm-12">
+                <input asp-for="ActiveMobileCode" class="form-control input-lg" placeholder="کد موبایل" />
+                <span asp-validation-for="ActiveMobileCode" class="text-danger validation-error"></span>
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <input asp-for="ActiveMobileCode" class="form-control input-lg" placeholder="کد ایمیل" />
+                <span asp-validation-for="ActiveMobileCode" class="text-danger validation-error"></span>
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <a href="#" class="btn btn-info btn-block" onclick="SendSmsAndMailCode()">ارسال کدها</a>
+            </div>
+        </div>
     </div>
     <div class="form-group">
         <input asp-for="Password" class="form-control input-lg" placeholder="کلمه عبور" />
@@ -41,7 +56,7 @@
     {
         <div class="form-group">
             <h4 class="text-center">
-                <a href="/Accounts/Login">ورود به پنل فروشگاه</a>
+                <a href="/Authentication/Account/Login">ورود به پنل فروشگاه</a>
             </h4>
         </div>
     }

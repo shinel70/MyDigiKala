@@ -12,10 +12,10 @@ namespace DigiKala.Core.Interfaces
         int GetUserRole(string username);
         string GetUserRoleName(string username);
         Store GetUserStore(string username);
-        bool ExistsMailActivate(string username, string code);
-        bool ExistsMobileActivate(string username, string code);
-        void ActiveMailAddress(string mailAddress);
-        void ActiveMobileNumber(string mobileNumber);
+        //bool ExistsMailActivate(string username, string code);
+        //bool ExistsMobileActivate(string username, string code);
+        //void ActiveMailAddress(string mailAddress);
+        //void ActiveMobileNumber(string mobileNumber);
         Setting GetSetting();
     }
 }

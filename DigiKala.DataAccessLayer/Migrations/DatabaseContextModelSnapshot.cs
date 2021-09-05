@@ -62,9 +62,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<int>("BannerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("EndDate")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("ExpireDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Img")
                         .HasColumnType("nvarchar(100)")
@@ -73,9 +72,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<bool>("IsExpire")
                         .HasColumnType("bit");
 
-                    b.Property<string>("StartDate")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(100)")
@@ -159,9 +157,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<string>("Desc")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EndDate")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("ExpireDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsExpire")
                         .HasColumnType("bit");
@@ -176,9 +173,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.Property<string>("StartDate")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
@@ -235,6 +231,16 @@ namespace DigiKala.DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Controller")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
@@ -258,9 +264,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DeletePrice")
                         .HasColumnType("int");
@@ -287,10 +292,6 @@ namespace DigiKala.DataAccessLayer.Migrations
 
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Time")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
 
                     b.HasKey("Id");
 
@@ -357,9 +358,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("IP")
                         .HasColumnType("nvarchar(30)")
@@ -367,10 +367,6 @@ namespace DigiKala.DataAccessLayer.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Time")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
 
                     b.HasKey("Id");
 
@@ -509,17 +505,6 @@ namespace DigiKala.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
-                    b.Property<bool>("MailActivate")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MailActivateCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(6)")
-                        .HasMaxLength(6);
-
-                    b.Property<bool>("MobileActivate")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
@@ -546,9 +531,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Desc")
                         .HasColumnType("nvarchar(max)");
@@ -559,10 +543,6 @@ namespace DigiKala.DataAccessLayer.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Time")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -576,7 +556,7 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.ToTable("StoreCategories");
                 });
 
-            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.User", b =>
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.TemporaryCode", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -588,14 +568,30 @@ namespace DigiKala.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(6)")
                         .HasMaxLength(6);
 
+                    b.Property<DateTime>("ExpireDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Identity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TemporaryCodes");
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
 
-                    b.Property<string>("Date")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(100)")

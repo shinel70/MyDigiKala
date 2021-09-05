@@ -59,7 +59,7 @@
                         </span>
                     </div>
                     <div class="user-pic">
-                        @if (roleName == "مدیر")
+                        @if (roleName.Contains(StaticData.Admin))
                         {
                             <img src="~/images/site/dk.png" alt="دیجی کالا" width="80" height="80" class="img-responsive" />
                         }
@@ -74,7 +74,7 @@
                 <div class="sidebar-menu">
                     <ul>
 
-                        @if (roleName == "مدیر")
+                        @if (roleName.Contains(StaticData.Admin))
                         {
                             <li class="sidebar-dropdown">
                                 <a href="#">
@@ -182,8 +182,8 @@
                                 <div class="sidebar-submenu">
                                     <ul>
                                         <li>
-                                            <a href="/Admin/Permissions">
-                                                تنظیمات دسترسی ها
+                                            <a href="/Admin/ShowRolePermissions">
+                                                تنظیمات نقش ها و دسترسی ها
                                             </a>
                                         </li>
                                         <li>
@@ -195,7 +195,7 @@
                                 </div>
                             </li>
                         }
-                        else
+                        else if(roleName.Contains(StaticData.Store))
                         {
                             <li class="sidebar-dropdown">
                                 <a href="#">
@@ -251,11 +251,11 @@
                                                 مشخصات فروشگاه
                                             </a>
                                         </li>
-                                        <li>
+                                        @*<li>
                                             <a href="/Panel/Activate">
                                                 فعالسازی حساب
                                             </a>
-                                        </li>
+                                        </li>*@
                                         <li>
                                             <a href="/Panel/ShowStoreCategory/">
                                                 بارگزاری مدارک
@@ -271,7 +271,7 @@
 
                 <div class="sidebar-footer">
 
-                    @if (roleName == "مدیر")
+                    @if (roleName.Contains(StaticData.Admin))
                     {
                         <a href="/Admin/ShowBrands">
                             <i class="fa fa-bell"></i>
@@ -292,7 +292,7 @@
                             <i class="fa fa-power-off"></i>
                         </a>
                     }
-                    else
+                    else if(roleName.Contains(StaticData.Store))
                     {
                         <a href="#">
                             <i class="fa fa-bell"></i>

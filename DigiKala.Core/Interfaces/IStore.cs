@@ -90,7 +90,7 @@ namespace DigiKala.Core.Interfaces
 
         void AddCoupon(Coupon coupon);
 
-        void UpdateCoupon(int id, string name, string code, bool expire, string desc, string start, string end, int percent, int price);
+        void UpdateCoupon(int id, string name, string code, bool expire, string desc, DateTime start, DateTime end, int percent, int price);
 
         void RemoveCoupon(int id);
 

@@ -22,15 +22,15 @@ namespace DigiKala.Core.Interfaces
 
         #region For Permission
 
-        void InsertPermission(Permission permission);
+        //void InsertPermission(Permission permission);
 
-        void UpdatePermission(int id, string name);
+        //void UpdatePermission(int id, string name);
 
-        void DeletePermission(int id);
+        //void DeletePermission(int id);
 
-        List<Permission> GetPermissions();
+        //List<Permission> GetPermissions();
 
-        Permission GetPermission(int id);
+        //Permission GetPermission(int id);
 
         #endregion
 
@@ -58,7 +58,7 @@ namespace DigiKala.Core.Interfaces
 
         #region Store
 
-        List<Store> GetActiveStores();
+        //List<Store> GetActiveStores();
 
         #endregion
 

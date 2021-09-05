@@ -38,11 +38,6 @@ namespace DigiKala.Core.Interfaces
 
         #endregion
 
-        List<Product> GetProducts(int id);
-
-        List<Store> GetStores(int id);
-
-        List<Brand> GetBrands(int id);
 
         #region ProductDetails
 

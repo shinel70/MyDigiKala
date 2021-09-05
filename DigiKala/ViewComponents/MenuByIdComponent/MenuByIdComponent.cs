@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using DigiKala.Core.Interfaces;
 using DigiKala.Core.Services;
-
+using DigiKala.DataAccessLayer.Context;
 using DigiKala.DataAccessLayer.Entities;
 
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,7 @@ namespace DigiKala.ViewComponents.MenuByIdComponent
     {
         private ITemp _temp;
 
-        public MenuByIdComponent(ITemp temp)
+        public MenuByIdComponent(ITemp temp, DatabaseContext context)
         {
             _temp = temp;
         }

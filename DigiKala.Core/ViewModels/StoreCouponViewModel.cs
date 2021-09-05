@@ -8,6 +8,7 @@ namespace DigiKala.Core.ViewModels
 {
     public class StoreCouponViewModel
     {
+        public int Id { get; set; }
         [Display(Name = "نام کوپن")]
         [Required(ErrorMessage = "نباید بدون مقدار باشد")]
         [MaxLength(100, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]

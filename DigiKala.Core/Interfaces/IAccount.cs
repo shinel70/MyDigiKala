@@ -20,13 +20,13 @@ namespace DigiKala.Core.Interfaces
 
         int GetUserId(string mobileNumber);
 
-        bool ActivateUser(string code);
+        //bool ActivateUser(string code);
 
         User LoginUser(string mobileNumber, string password);
 
-        bool ResetPassword(string code, string password);
+        //bool ResetPassword(string code, string password);
 
-        string GetUserActiveCode(string mobileNumber);
+        //string GetUserActiveCode(string mobileNumber);
 
         void AddStore(Store store);
 

@@ -16,13 +16,9 @@ namespace DigiKala.DataAccessLayer.Entities
 
         public int CategoryId { get; set; }
 
-        [Display(Name = "تاریخ")]
-        [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string Date { get; set; }
+        [Display(Name = "تاریخ و زمان")]
+        public DateTime DateTime { get; set; }
 
-        [Display(Name = "ساعت")]
-        [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string Time { get; set; }
 
         [Display(Name = "تأیید")]
         public bool IsActive { get; set; }

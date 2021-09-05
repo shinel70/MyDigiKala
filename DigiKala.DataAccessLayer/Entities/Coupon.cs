@@ -31,14 +31,14 @@ namespace DigiKala.DataAccessLayer.Entities
         [Display(Name = "مبلغ تخفیف")]
         public int Price { get; set; }
 
-        [Display(Name = "تاریخ شروع")]
-        [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string StartDate { get; set; }
+        [Display(Name = "تاریخ و زمان شروع")]
+        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
+        public DateTime StartDateTime { get; set; }
 
         // 1399/01/01
-        [Display(Name = "تاریخ پایان")]        
-        [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
-        public string EndDate { get; set; }
+        [Display(Name = "تاریخ و زمان پایان")]
+        [Required(ErrorMessage = "نباید بدون مقدار باشد")]
+        public DateTime ExpireDateTime { get; set; }
 
         [Display(Name = "منقضی شده")]
         public bool IsExpire { get; set; }
