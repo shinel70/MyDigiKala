@@ -325,7 +325,7 @@ namespace DigiKala.Core.Services
             _context.SaveChanges();
         }
 
-        public void UpdateBanner(int id, string name, string defaultimg, string desc, string size, int day, int price)
+        public void UpdateBanner(int id, string name, string defaultimg, string desc, string size, int day, ulong price)
         {
             Banner banner = _context.Banners.Find(id);
 

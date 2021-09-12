@@ -22,7 +22,7 @@ namespace DigiKala.Core.ViewModels
         public string Desc { get; set; }
 
         [Display(Name = "مبلغ اجاره")]
-        public int Price { get; set; }
+        public ulong Price { get; set; }
 
         [Display(Name = "تعداد روز")]
         public int Day { get; set; }

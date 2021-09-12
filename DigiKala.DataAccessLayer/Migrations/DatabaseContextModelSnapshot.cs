@@ -40,8 +40,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<string>("Size")
                         .HasColumnType("nvarchar(50)")
@@ -143,6 +143,59 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Depth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReplyCommentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(90)")
+                        .HasMaxLength(90);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ReplyCommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.CommentLike", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CommentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "CommentId");
+
+                    b.HasIndex("CommentId");
+
+                    b.ToTable("CommentLikes");
+                });
+
             modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Coupon", b =>
                 {
                     b.Property<int>("Id")
@@ -170,8 +223,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<int>("Percent")
                         .HasColumnType("int");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");
@@ -224,6 +277,51 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.ToTable("FieldCategories");
                 });
 
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime?>("CloseDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.OrderProduct", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("Rating")
+                        .HasColumnType("real");
+
+                    b.HasKey("ProductId", "OrderId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderProducts");
+                });
+
             modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -267,8 +365,8 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DeletePrice")
-                        .HasColumnType("int");
+                    b.Property<decimal>("DeletePrice")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<string>("Desc")
                         .HasColumnType("nvarchar(max)");
@@ -287,8 +385,11 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<bool>("NotShow")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
 
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
@@ -509,12 +610,15 @@ namespace DigiKala.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
                     b.Property<string>("Tel")
                         .HasColumnType("nvarchar(40)")
                         .HasMaxLength(40);
 
-                    b.Property<long>("Wallet")
-                        .HasColumnType("bigint");
+                    b.Property<decimal>("Wallet")
+                        .HasColumnType("decimal(20,0)");
 
                     b.HasKey("UserId");
 
@@ -620,6 +724,26 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.UserAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAddresses");
+                });
+
             modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.BannerDetails", b =>
                 {
                     b.HasOne("DigiKala.DataAccessLayer.Entities.Banner", "Banner")
@@ -639,8 +763,42 @@ namespace DigiKala.DataAccessLayer.Migrations
             modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Category", b =>
                 {
                     b.HasOne("DigiKala.DataAccessLayer.Entities.Category", "Parent")
-                        .WithMany()
+                        .WithMany("SubCategories")
                         .HasForeignKey("ParentId");
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Comment", b =>
+                {
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.Product", "Product")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.Comment", "ReplyComment")
+                        .WithMany("ChildComments")
+                        .HasForeignKey("ReplyCommentId");
+
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.CommentLike", b =>
+                {
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.Comment", "Comment")
+                        .WithMany("CommentLikes")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.User", "User")
+                        .WithMany("CommentLikes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Coupon", b =>
@@ -664,6 +822,30 @@ namespace DigiKala.DataAccessLayer.Migrations
                         .WithMany("FieldCategories")
                         .HasForeignKey("FieldId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.Order", b =>
+                {
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.OrderProduct", b =>
+                {
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.Order", "Order")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.Product", "Product")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -765,6 +947,15 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.HasOne("DigiKala.DataAccessLayer.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DigiKala.DataAccessLayer.Entities.UserAddress", b =>
+                {
+                    b.HasOne("DigiKala.DataAccessLayer.Entities.User", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

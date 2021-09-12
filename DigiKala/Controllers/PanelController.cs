@@ -25,11 +25,11 @@ namespace DigiKala.Controllers
     [Authorize]
     public class PanelController : Controller
     {
-        private IUser _user;
-        private IStore _store;
-        private DatabaseContext _context;
+        private readonly IUser _user;
+        private readonly IStore _store;
+        private readonly DatabaseContext _context;
 
-        private PersianCalendar pc = new PersianCalendar();
+		private readonly PersianCalendar _pc = new PersianCalendar();
 
         public PanelController(IUser user, IStore store, DatabaseContext context)
         {
@@ -42,50 +42,6 @@ namespace DigiKala.Controllers
         {
             return View();
         }
-
-        //public IActionResult Activate()
-        //{
-        //    ViewBag.IsOK = false;
-
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public IActionResult Activate(StoreActivateViewModel viewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        string username = User.Identity.Name;
-
-        //        Store store = _user.GetUserStore(username);
-
-        //        if (_user.ExistsMobileActivate(username, viewModel.MobileCode))
-        //        {
-        //            if (_user.ExistsMailActivate(username, viewModel.MailCode))
-        //            {
-
-        //                _user.ActiveMobileNumber(username);
-        //                _user.ActiveMailAddress(store.Mail);
-
-        //                ViewBag.IsOK = true;
-        //            }
-        //            else
-        //            {
-        //                ModelState.AddModelError("MailCode", "کد فعالسازی شما اشتباه است");
-
-        //                ViewBag.IsOK = false;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("MobileCode", "کد فعالسازی شما اشتباه است");
-
-        //            ViewBag.IsOK = false;
-        //        }
-        //    }
-
-        //    return View(viewModel);
-        //}
 
         public IActionResult Edit()
         {
@@ -832,12 +788,12 @@ namespace DigiKala.Controllers
                     Id = item.Id,
                     Code = item.Code,
                     Desc = item.Desc,
-                    EndDate = pc.GetYear(item.ExpireDateTime) + "/" + pc.GetMonth(item.ExpireDateTime) + "/" + pc.GetDayOfMonth(item.ExpireDateTime),
+                    EndDate = _pc.GetYear(item.ExpireDateTime) + "/" + _pc.GetMonth(item.ExpireDateTime) + "/" + _pc.GetDayOfMonth(item.ExpireDateTime),
                     IsExpire = item.IsExpire,
                     Name = item.Name,
                     Percent = item.Percent,
                     Price = item.Price,
-                    StartDate = pc.GetYear(item.StartDateTime) + "/" + pc.GetMonth(item.StartDateTime) + "/" + pc.GetDayOfMonth(item.StartDateTime)
+                    StartDate = _pc.GetYear(item.StartDateTime) + "/" + _pc.GetMonth(item.StartDateTime) + "/" + _pc.GetDayOfMonth(item.StartDateTime)
                 });
             }
 
@@ -846,8 +802,8 @@ namespace DigiKala.Controllers
 
         public IActionResult AddCoupon()
         {
-            string strToday = pc.GetYear(DateTime.Now).ToString("0000") + "/" +
-                pc.GetMonth(DateTime.Now).ToString("00") + "/" + pc.GetDayOfMonth(DateTime.Now).ToString("00");
+            string strToday = _pc.GetYear(DateTime.Now).ToString("0000") + "/" +
+                _pc.GetMonth(DateTime.Now).ToString("00") + "/" + _pc.GetDayOfMonth(DateTime.Now).ToString("00");
 
             ViewBag.MyDate = strToday;
 
@@ -880,13 +836,13 @@ namespace DigiKala.Controllers
                     {
                         Code = viewModel.Code,
                         Desc = viewModel.Desc,
-                        ExpireDateTime = pc.ToDateTime(Convert.ToInt32(EndDate[0]), Convert.ToInt32(EndDate[1]), Convert.ToInt32(EndDate[2]), 0, 0, 0, 0),
+                        ExpireDateTime = _pc.ToDateTime(Convert.ToInt32(EndDate[0]), Convert.ToInt32(EndDate[1]), Convert.ToInt32(EndDate[2]), 0, 0, 0, 0),
                         IsExpire = false,
                         StoreId = store.UserId,
                         Name = viewModel.Name,
                         Percent = viewModel.Percent,
                         Price = viewModel.Price,
-                        StartDateTime = pc.ToDateTime(Convert.ToInt32(StartDate[0]), Convert.ToInt32(StartDate[1]), Convert.ToInt32(StartDate[2]), 0, 0, 0, 0)
+                        StartDateTime = _pc.ToDateTime(Convert.ToInt32(StartDate[0]), Convert.ToInt32(StartDate[1]), Convert.ToInt32(StartDate[2]), 0, 0, 0, 0)
                     };
 
                     _store.AddCoupon(coupon);
@@ -908,11 +864,11 @@ namespace DigiKala.Controllers
             {
                 Code = coupon.Code,
                 Desc = coupon.Desc,
-                EndDate = pc.GetYear(coupon.ExpireDateTime).ToString("0000") + "/" + pc.GetMonth(coupon.ExpireDateTime).ToString("00") + "/" + pc.GetDayOfMonth(coupon.ExpireDateTime).ToString("00"),
+                EndDate = _pc.GetYear(coupon.ExpireDateTime).ToString("0000") + "/" + _pc.GetMonth(coupon.ExpireDateTime).ToString("00") + "/" + _pc.GetDayOfMonth(coupon.ExpireDateTime).ToString("00"),
                 Name = coupon.Name,
                 Percent = coupon.Percent,
                 Price = coupon.Price,
-                StartDate = pc.GetYear(coupon.StartDateTime).ToString("0000") + "/" + pc.GetMonth(coupon.StartDateTime).ToString("00") + "/" + pc.GetDayOfMonth(coupon.StartDateTime).ToString("00"),
+                StartDate = _pc.GetYear(coupon.StartDateTime).ToString("0000") + "/" + _pc.GetMonth(coupon.StartDateTime).ToString("00") + "/" + _pc.GetDayOfMonth(coupon.StartDateTime).ToString("00"),
             };
 
             return View(viewModel);
@@ -933,8 +889,8 @@ namespace DigiKala.Controllers
                 }
 
 
-                DateTime sdate = pc.ToDateTime(Convert.ToInt32(StartDate[0]), Convert.ToInt32(StartDate[1]), Convert.ToInt32(StartDate[2]), 0, 0, 0, 0);
-                DateTime edate = pc.ToDateTime(Convert.ToInt32(EndDate[0]), Convert.ToInt32(EndDate[1]), Convert.ToInt32(EndDate[2]), 0, 0, 0, 0);
+                DateTime sdate = _pc.ToDateTime(Convert.ToInt32(StartDate[0]), Convert.ToInt32(StartDate[1]), Convert.ToInt32(StartDate[2]), 0, 0, 0, 0);
+                DateTime edate = _pc.ToDateTime(Convert.ToInt32(EndDate[0]), Convert.ToInt32(EndDate[1]), Convert.ToInt32(EndDate[2]), 0, 0, 0, 0);
                 _store.UpdateCoupon(id, viewModel.Name, viewModel.Code, viewModel.IsExpire, viewModel.Desc,
                     sdate, edate, viewModel.Percent, viewModel.Price);
 
@@ -952,12 +908,12 @@ namespace DigiKala.Controllers
                 Id = coupon.Id,
                 Code = coupon.Code,
                 Desc = coupon.Desc,
-                EndDate = pc.GetYear(coupon.ExpireDateTime) + "/" + pc.GetMonth(coupon.ExpireDateTime) + "/" + pc.GetDayOfMonth(coupon.ExpireDateTime),
+                EndDate = _pc.GetYear(coupon.ExpireDateTime) + "/" + _pc.GetMonth(coupon.ExpireDateTime) + "/" + _pc.GetDayOfMonth(coupon.ExpireDateTime),
                 IsExpire = coupon.IsExpire,
                 Name = coupon.Name,
                 Percent = coupon.Percent,
                 Price = coupon.Price,
-                StartDate = pc.GetYear(coupon.StartDateTime) + "/" + pc.GetMonth(coupon.StartDateTime) + "/" + pc.GetDayOfMonth(coupon.StartDateTime)
+                StartDate = _pc.GetYear(coupon.StartDateTime) + "/" + _pc.GetMonth(coupon.StartDateTime) + "/" + _pc.GetDayOfMonth(coupon.StartDateTime)
             };
             return View(storeCouponViewModel);
         }

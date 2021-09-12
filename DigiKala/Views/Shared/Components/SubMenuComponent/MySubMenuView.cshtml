@@ -2,9 +2,14 @@
 
 <ul class="stander">
 
-    @foreach (var item in Model)
-    {
-        <li><a href="/Home/SearchByCategory/@item.Name">@item.Name</a></li>
-    }
+	@foreach (var item in Model)
+	{
+		<li>
+			<a href="/Home/SearchByCategory/@item.Name">
+				@item.Name
+			</a>
+		</li>
+
+	}
 
 </ul>

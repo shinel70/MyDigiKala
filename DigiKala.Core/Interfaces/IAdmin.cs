@@ -153,7 +153,7 @@ namespace DigiKala.Core.Interfaces
 
         Banner GetBanner(int id);
 
-        void UpdateBanner(int id, string name, string defaultimg, string desc, string size, int day, int price);
+        void UpdateBanner(int id, string name, string defaultimg, string desc, string size, int day, ulong price);
 
         void AddBannerDetails(BannerDetails bannerDetails);
 

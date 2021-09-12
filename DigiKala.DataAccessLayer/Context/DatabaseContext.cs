@@ -35,5 +35,20 @@ namespace DigiKala.DataAccessLayer.Context
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<BannerDetails> BannerDetails { get; set; }
         public DbSet<TemporaryCode> TemporaryCodes { get; set; }
-    }
+		public DbSet<Comment> Comments { get; set; }
+		public DbSet<CommentLike> CommentLikes { get; set; }
+		public DbSet<Order> Orders { get; set; }
+		public DbSet<OrderProduct> OrderProducts { get; set; }
+		public DbSet<UserAddress> UserAddresses { get; set; }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+            //modelBuilder.Entity<Comment>().HasMany(c => c.ChildComments).WithOne(c => c.ReplyComment).HasForeignKey(c =>c.ReplyCommentId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<User>().HasMany(u => u.Comments).WithOne(c => c.User).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
+            //modelBuilder.Entity<Product>().HasMany(p => p.Comments).WithOne(c => c.Product).HasForeignKey(c => c.ProductId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<CommentLike>().HasKey(cl =>new { cl.UserId, cl.CommentId});
+            modelBuilder.Entity<CommentLike>().HasOne(cl => cl.User).WithMany(u => u.CommentLikes).HasForeignKey(cl => cl.UserId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<OrderProduct>().HasKey(op => new { op.ProductId, op.OrderId });
+            modelBuilder.Entity<OrderProduct>().HasOne(op => op.Product).WithMany(p => p.OrderProducts).HasForeignKey(op => op.ProductId).OnDelete(DeleteBehavior.NoAction);
+		}
+	}
 }

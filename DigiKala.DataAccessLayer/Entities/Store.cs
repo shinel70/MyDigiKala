@@ -39,8 +39,11 @@ namespace DigiKala.DataAccessLayer.Entities
         [DataType(DataType.MultilineText)]
         public string Desc { get; set; }
 
-        [Display(Name = "موجودی")]
-        public long Wallet { get; set; }
+        [Range(0, 5)]
+        public float Rating { get; set; } = 5;
+
+		[Display(Name = "موجودی")]
+        public ulong Wallet { get; set; }
 
         [Display(Name = "شماره شبا")]
         [MaxLength(24, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]

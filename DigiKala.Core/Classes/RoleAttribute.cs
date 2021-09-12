@@ -18,8 +18,6 @@ namespace DigiKala.Core.Classes
 {
     public class RoleAttribute : AuthorizeAttribute, IAuthorizationFilter
     {
-        int _permissionID;
-
         //IUser _iuser;
 
         //public RoleAttribute(int permissionID)

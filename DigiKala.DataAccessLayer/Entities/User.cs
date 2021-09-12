@@ -40,7 +40,10 @@ namespace DigiKala.DataAccessLayer.Entities
         public DateTime DateTime { get; set; }
 
         public virtual Role Role { get; set; }
-
-        public virtual Store Store { get; set; }
-    }
+		public virtual Store Store { get; set; }
+		public virtual IList<UserAddress> Addresses { get; set; }
+		public virtual IList<Comment> Comments { get; set; }
+		public virtual IList<CommentLike> CommentLikes { get; set; }
+		public virtual IList<Order> Orders { get; set; }
+	}
 }

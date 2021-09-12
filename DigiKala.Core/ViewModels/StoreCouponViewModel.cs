@@ -27,7 +27,7 @@ namespace DigiKala.Core.ViewModels
         public int Percent { get; set; }
 
         [Display(Name = "مبلغ تخفیف")]
-        public int Price { get; set; }
+        public ulong Price { get; set; }
 
         [Display(Name = "تاریخ شروع")]
         [MaxLength(10, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]

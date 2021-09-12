@@ -29,7 +29,7 @@ namespace DigiKala.DataAccessLayer.Entities
         public int Percent { get; set; }
 
         [Display(Name = "مبلغ تخفیف")]
-        public int Price { get; set; }
+        public ulong Price { get; set; }
 
         [Display(Name = "تاریخ و زمان شروع")]
         [Required(ErrorMessage = "نباید بدون مقدار باشد")]

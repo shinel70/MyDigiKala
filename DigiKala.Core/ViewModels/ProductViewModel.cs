@@ -23,10 +23,10 @@ namespace DigiKala.Core.ViewModels
         public string ImgName { get; set; }
 
         [Display(Name = "قیمت")]
-        public int Price { get; set; }
+        public ulong Price { get; set; }
 
         [Display(Name = "قیمت قبل")]
-        public int DeletePrice { get; set; }
+        public ulong DeletePrice { get; set; }
 
         [Display(Name = "موجودی")]
         public int Exist { get; set; }

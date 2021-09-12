@@ -56,12 +56,14 @@ namespace DigiKala
             services.AddTransient<ITemp, TempService>();
             services.AddTransient<IViewRenderService, RenderToString>();
 
+            services.AddAutoMapper(opt => { opt.AddMaps("Digikala.Core"); });
+
             services.AddScoped<PanelLayoutScope>();
             services.AddScoped<TemplateScope>();
             services.AddScoped<MessageSender>();
             services.AddSession(option => { option.IdleTimeout = TimeSpan.FromDays(7);option.Cookie.HttpOnly = true;option.Cookie.IsEssential = true; });
 
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddControllersWithViews().AddNewtonsoftJson(option => option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,18 +74,15 @@ namespace DigiKala
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
-            app.UseMvcWithDefaultRoute();
-                       
             app.UseRouting();
+                       
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseStaticFiles();
             app.UseSession();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }

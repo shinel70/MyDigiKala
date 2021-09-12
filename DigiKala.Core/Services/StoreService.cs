@@ -211,7 +211,7 @@ namespace DigiKala.Core.Services
             _context.SaveChanges();
         }
 
-        public void UpdateCoupon(int id, string name, string code, bool expire, string desc, DateTime start, DateTime end, int percent, int price)
+        public void UpdateCoupon(int id, string name, string code, bool expire, string desc, DateTime start, DateTime end, int percent, ulong price)
         {
             Coupon coupon = _context.Coupons.Find(id);
 
@@ -231,7 +231,7 @@ namespace DigiKala.Core.Services
             _context.SaveChanges();
         }
 
-        public void UpdateProduct(int id, int brandid, int catid, string name, string img, int price, int delprice, int exists, bool notshow, string desc)
+        public void UpdateProduct(int id, int brandid, int catid, string name, string img, ulong price, ulong delprice, int exists, bool notshow, string desc)
         {
             Product product = _context.Products.Find(id);
 

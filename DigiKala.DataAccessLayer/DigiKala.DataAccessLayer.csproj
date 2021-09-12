@@ -5,6 +5,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20210909101612_AddCommentEntity.cs" />
+    <Compile Remove="Migrations\20210909101612_AddCommentEntity.Designer.cs" />
+    <Compile Remove="Migrations\20210909105241_AddCommentEntity.cs" />
+    <Compile Remove="Migrations\20210909105241_AddCommentEntity.Designer.cs" />
+    <Compile Remove="Migrations\20210909105542_AddCommentEntity.cs" />
+    <Compile Remove="Migrations\20210909105542_AddCommentEntity.Designer.cs" />
+    <Compile Remove="Migrations\20210909110002_AddCommentEntity.cs" />
+    <Compile Remove="Migrations\20210909110002_AddCommentEntity.Designer.cs" />
+    <Compile Remove="Migrations\20210909111108_CorrectComment.cs" />
+    <Compile Remove="Migrations\20210909111108_CorrectComment.Designer.cs" />
+    <Compile Remove="Migrations\20210909230622_AddCommentLike.cs" />
+    <Compile Remove="Migrations\20210909230622_AddCommentLike.Designer.cs" />
+    <Compile Remove="Migrations\20210911155725_AddOrderAndOrderProductAndUserAddressesCommentsAndCLUpdateIntToulong.cs" />
+    <Compile Remove="Migrations\20210911155725_AddOrderAndOrderProductAndUserAddressesCommentsAndCLUpdateIntToulong.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.2">

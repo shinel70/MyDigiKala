@@ -44,7 +44,7 @@ namespace DigiKala.Core.Interfaces
 
         void DeleteProduct(int id);
 
-        void UpdateProduct(int id, int brandid, int catid, string name, string img, int price, int delprice, int exists, bool notshow, string desc);
+        void UpdateProduct(int id, int brandid, int catid, string name, string img, ulong price, ulong delprice, int exists, bool notshow, string desc);
 
         Product GetProduct(int id);
 
@@ -90,7 +90,7 @@ namespace DigiKala.Core.Interfaces
 
         void AddCoupon(Coupon coupon);
 
-        void UpdateCoupon(int id, string name, string code, bool expire, string desc, DateTime start, DateTime end, int percent, int price);
+        void UpdateCoupon(int id, string name, string code, bool expire, string desc, DateTime start, DateTime end, int percent, ulong price);
 
         void RemoveCoupon(int id);
 
