@@ -18,6 +18,11 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using DigiKala.Core.Dtoes;
 using Z.EntityFramework.Plus;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
+using DigiKala.Core.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace DigiKala.Controllers
 {
@@ -26,12 +31,14 @@ namespace DigiKala.Controllers
 		private readonly ITemp _temp;
 		private readonly DatabaseContext _context;
 		private readonly IMapper _mapper;
+		private readonly IMemoryCache _cache;
 
-		public HomeController(ITemp temp, DatabaseContext context, IMapper mapper)
+		public HomeController(ITemp temp, DatabaseContext context, IMapper mapper, IMemoryCache cache)
 		{
 			_temp = temp;
 			_context = context;
 			_mapper = mapper;
+			_cache = cache;
 		}
 
 		[Route("Home/SearchByCategory/{CategoryName}")]
@@ -106,15 +113,64 @@ namespace DigiKala.Controllers
 		[Route("/Product/{id}/{title}")]
 		public IActionResult Product(int id, string title)
 		{
-			var viewModel = new ProductDetailsViewModel();
 
+			var viewModel = new ProductDetailsViewModel();
 			Product product = _temp.GetProductDetail(id);
 
-			viewModel.FillProduct = product;
+			ProductSeen productSeen = new ProductSeen()
+			{
+				DateTime = DateTime.Now,
+				IP = HttpContext.Connection.RemoteIpAddress.ToString(),
+				ProductId = product.Id
+			};
+			if (!_cache.TryGetValue($"p{HttpContext.Connection.RemoteIpAddress.ToString()}", out var data))
+			{
+				_cache.Set($"p{HttpContext.Connection.RemoteIpAddress.ToString()}", "", new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(10)));
+				_context.ProductSeens.Add(productSeen);
+				_context.SaveChanges();
+			}
 
+			var sessionProductsSeen = new List<int>();
+			if (string.IsNullOrEmpty(HttpContext.Session.GetString(StaticData.productSeen)))
+			{
+				sessionProductsSeen.Add(product.Id);
+				HttpContext.Session.SetObject(StaticData.productSeen, sessionProductsSeen);
+			}
+			else
+			{
+				sessionProductsSeen = HttpContext.Session.GetObject<List<int>>(StaticData.productSeen);
+				if (!sessionProductsSeen.Contains(product.Id))
+				{
+					sessionProductsSeen.Add(product.Id);
+					HttpContext.Session.SetObject(StaticData.productSeen, sessionProductsSeen);
+				}
+			}
+
+			viewModel.FillProduct = product;
 			return View(viewModel);
 		}
-
+		public IActionResult ShowOrders()
+		{
+			if (!User.Identity.IsAuthenticated)
+				return Redirect("/Accounts/Register");
+			User user = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name);
+			return Ok();
+		}
+		//[Authorize]
+		[HttpGet]
+		public IActionResult AddOrder([FromQuery(Name = "productIdQties")]string productIdQties)
+		{
+			var viewModels = JsonConvert.DeserializeObject<List<AddOrderHttpGetViewModel>>(productIdQties);
+			AddOrderViewModel addOrderViewModel = new AddOrderViewModel();
+			addOrderViewModel.Products = _context.Products.Where(p => viewModels.Any(vm => vm.Id == p.Id) && p.Exist > 0).ToList();
+			addOrderViewModel.User = _context.Users.Include(u => u.Addresses).FirstOrDefault(u => u.Mobile == User.Identity.Name);
+			return View(viewModels);
+		}
+		[HttpPost]
+		public IActionResult AddOrder(AddOrderViewModel viewModel)
+		{
+			return View();
+		}
 
 		#region api
 		public IActionResult GetComments(int productId)
@@ -159,7 +215,7 @@ namespace DigiKala.Controllers
 		public IActionResult AddComment(AddCommentDto Dto)
 		{
 			ModelState.Remove("Depth");
-			if(!User.Identity.IsAuthenticated)
+			if (!User.Identity.IsAuthenticated)
 				return Unauthorized();
 			Dto.UserId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
 			if (!ModelState.IsValid)

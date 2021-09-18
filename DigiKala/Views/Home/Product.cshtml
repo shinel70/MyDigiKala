@@ -65,21 +65,27 @@
 						</div>
 						@*<div class="about-seller-area">
 							<i class="fa fa-thumbs-o-up seller-icon"></i><span class="warranty-span">گارانتی 18 ماهه</span>
-						</div>*@
+							</div>*@
 						<div class="about-seller-area border-bottm-seller">
 							@if (Model.FillProduct.Exist == 0)
 							{
-								<i class="fa fa-times seller-icon exist-in"></i><span class="exist-span">موجود نیست</span>
+								<i class="fa fa-times seller-icon exist-in"></i>
+
+								<span class="exist-span">موجود نیست</span>
 							}
 							else
 							{
 								if (Model.FillProduct.Exist <= 5)
 								{
-									<i class="fa fa-check seller-icon exist-in"></i><span class="exist-span">تنها @Model.FillProduct.Exist عدد باقی مانده</span>
+									<i class="fa fa-check seller-icon exist-in"></i>
+
+									<span class="exist-span">تنها @Model.FillProduct.Exist عدد باقی مانده</span>
 								}
 								else
 								{
-									<i class="fa fa-check seller-icon exist-in"></i><span class="exist-span">موجود در انبار</span>
+									<i class="fa fa-check seller-icon exist-in"></i>
+
+									<span class="exist-span">موجود در انبار</span>
 								}
 							}
 						</div>
@@ -88,12 +94,21 @@
 								<span class="price-span-green">@Model.FillProduct.Price.ToString("n0")</span><span class="next-price-span-green">ریال</span>
 								@if (Model.FillProduct.DeletePrice != 0)
 								{
-									<del class="price-span-red">@Model.FillProduct.DeletePrice.ToString("n0")</del><span class="next-price-span-red">ریال</span>
+									<del class="price-span-red">@Model.FillProduct.DeletePrice.ToString("n0")</del>
+
+									<span class="next-price-span-red">ریال</span>
 								}
 							</div>
 							@if (Model.FillProduct.Exist != 0)
 							{
-								<div class="basket-btn-area"><a class="basket-btn" href="#">افزودن به سبد خرید</a></div>
+								<div class="basket-btn-area">
+									<button class="basket-btn" 
+									onclick="addToBasket({id: @Model.FillProduct.Id
+									,img: '@Model.FillProduct.Img'
+									,name: '@Model.FillProduct.Name'
+									,price: @Model.FillProduct.Price
+									,qty: 1})">افزودن به سبد خرید</button>
+								</div>
 							}
 						</div>
 					</div>

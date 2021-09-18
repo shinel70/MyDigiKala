@@ -35,33 +35,6 @@ a {
 	}
 
 /* Left Header */
-
-.dropdowns {
-	position: relative;
-}
-
-	.dropdowns:hover .minicart-content {
-		display: block;
-	}
-
-.minicart-content {
-	background-color: whitesmoke;
-	border: 1px solid #ddd;
-	color: #333;
-	display: none;
-	padding: 12px;
-	position: absolute;
-	left: 0;
-	top: 44px;
-	z-index: 200;
-}
-
-	.minicart-content ul li {
-		border-bottom: 1px solid #ddd;
-		margin-bottom: 12px;
-		padding-bottom: 12px;
-	}
-
 .account-dropdown-btn a {
 	background: #fff;
 	color: #ee3940;
@@ -95,7 +68,28 @@ a {
 	font-size: 16px;
 	margin-left: 10px;
 }
+.dropdowns {
+	position: relative;
+}
 
+	.dropdowns:hover .minicart-content {
+		display: block;
+	}
+
+.minicart-content {
+	background-color: whitesmoke;
+	border: 1px solid #ddd;
+	color: #333;
+	display: none;
+	padding: 12px;
+	position: absolute;
+	left: 0;
+	top: 44px;
+	z-index: 200;
+}
+.minicart-content table tr td{
+	text-align:center;
+}
 .cart-dropdown-btn a {
 	background: #ee3940;
 	color: #fff;

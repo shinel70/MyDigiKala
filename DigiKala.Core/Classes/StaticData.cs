@@ -7,6 +7,7 @@ namespace DigiKala.Core.Classes
     public static class StaticData
     {
         public const string sessionCard = "Cart";
+        public const string productSeen = "productSeen";
 
         public const string Admin = "مدیر";
         public const string Store = "فروشگاه";
