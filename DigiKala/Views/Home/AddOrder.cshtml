@@ -1,5 +1,121 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model DigiKala.DataAccessLayer.Entities.Order
+
 @{
+	Layout = "~/Views/Shared/_Panel.cshtml";
+
+
+	ulong totalPrice = 0;
 }
+
+<div class="col-lg-offset-3 col-lg-8 col-md-offset-3 col-md-8 col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 panel-back">
+	<div class="margin-top-50">
+		<h3 class="pull-right">
+			خرید سفارش
+		</h3>
+	</div>
+	<div class="margin-top-30">
+		<form asp-action="AddOrder">
+			<input type="hidden" name="productIdQties" id="basket"/>
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<table class="table table-bordered table-hover">
+
+				<thead>
+
+					<tr>
+						<th>@Html.DisplayNameFor(model => model.OrderProducts.First().Product.Img)</th>
+						<th>
+							@Html.DisplayNameFor(model => model.OrderProducts[0].Product.Name)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.OrderProducts[0].Product.Price)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.OrderProducts[0].Qty)
+						</th>
+						<th>قیمت کل</th>
+					</tr>
+
+				</thead>
+
+				<tbody>
+					@for (var i= 0;i<Model.OrderProducts.Count;i++)
+							{
+						var sum = Convert.ToUInt64(Model.OrderProducts[i].Qty) * Model.OrderProducts[i].Product.Price;
+						totalPrice += sum;
+						<tr>
+							<td>
+								<img src="~/images/products/@Model.OrderProducts[i].Product.Img" style="max-height:50px;max-width:50px;">
+							</td>
+							<td>
+								<p>@Model.OrderProducts[i].Product.Name</p>
+							</td>
+							<td>
+								@if(Model.OrderProducts[i].Product.DeletePrice !=0)
+								{
+									<del style="color:red">@Model.OrderProducts[i].Product.DeletePrice.ToString("n0") ریال</del>
+								}
+								<p>@Model.OrderProducts[i].Product.Price.ToString("n0") ریال</p>
+							</td>
+							<td>
+								@if (Model.OrderProducts[i].Qty == 0)
+								{
+									@if (Model.OrderProducts[i].Product.Exist == 0)
+									{
+										<p>اتمام موجودی</p>
+									}
+									else
+									{
+										<p>درخواست نامعتبر</p>
+									}
+								}
+								else
+								{
+									<p>@Model.OrderProducts[i].Qty</p>
+								}
+							</td>
+							<td>
+								@if (Model.OrderProducts[i].Qty == 0)
+								{
+									<p>0</p>
+								}
+								else
+								{
+									<p>@sum.ToString("n0") ریال</p>
+								}
+							</td>
+						</tr>
+					}
+					@if (Model.User.Addresses.Count > 0)
+					{
+						<tr>
+							<td colspan = "5">
+								<select style="width:100%;padding:13px;" name="UserAddress" asp-items="@(new SelectList(Model.User.Addresses,"Id","Address"))">
+									<option>انتخاب آدرس</option>
+								</select>
+							</td>
+						</tr>
+					}
+					<tr>
+						<td colspan="5">
+							<input name="Address" style="width:80%; padding:13px;" placeholder="اگر آدرسی انتخاب نکردید آدرس جدید را اینجا بنویسید"/>
+							ذخیره آدرس : <input type="checkbox" name="isAddressBecomeSave" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4"><input type="submit" class="btn btn-block btn-info" value="پرداخت صورت حساب" /></td>
+						<td>@totalPrice.ToString("n0") ریال</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</form>
+	</div>
+
+	@section mySection
+	{
+		<script>
+			let requestedProducts = document.getElementById("basket");
+			let basket = localStorage.getItem("basket");
+			requestedProducts.value = basket;
+		</script>
+	}

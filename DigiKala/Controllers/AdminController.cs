@@ -1077,7 +1077,7 @@ namespace DigiKala.Controllers
                     Title = viewModel.Name,
                     IsExpire = false,
                     StartDateTime = dt,
-                    ExpireDateTime = dt.AddDays(1),
+                    ExpireDateTime = dt.AddDays(banner.Day),
                     Url = viewModel.Url
                 };
 

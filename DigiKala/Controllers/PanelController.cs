@@ -28,7 +28,6 @@ namespace DigiKala.Controllers
         private readonly IUser _user;
         private readonly IStore _store;
         private readonly DatabaseContext _context;
-
 		private readonly PersianCalendar _pc = new PersianCalendar();
 
         public PanelController(IUser user, IStore store, DatabaseContext context)
@@ -710,11 +709,15 @@ namespace DigiKala.Controllers
         public IActionResult IndexProductFields(int id)
         {
             Product product = _store.GetProduct(id);
-            Category category = _store.GetCategory(product.CategoryId);
+            int categoryId = _store.GetCategory(product.CategoryId).Id;
 
-            int? categoryId = category.Parent.ParentId;
-
-            List<FieldCategory> fieldCategories = _store.GetFieldCategories((int)categoryId);
+            var categories = _context.Categories.ToList();
+            var category = categories.FirstOrDefault(c => c.Id == categoryId);
+            while(category.ParentId != null)
+			{
+                category = category.Parent;
+			}
+            List<FieldCategory> fieldCategories = _store.GetFieldCategories(category.Id);
 
             ViewBag.MyId = id;
 
@@ -746,11 +749,15 @@ namespace DigiKala.Controllers
             }
 
             Product product = _store.GetProduct(id);
-            Category category = _store.GetCategory(product.CategoryId);
+            int categoryId = _store.GetCategory(product.CategoryId).Id;
 
-            int? categoryId = category.Parent.ParentId;
-
-            List<FieldCategory> fieldCategories = _store.GetFieldCategories((int)categoryId);
+            var categories = _context.Categories.ToList();
+            var category = categories.FirstOrDefault(c => c.Id == categoryId);
+            while (category.ParentId != null)
+            {
+                category = category.Parent;
+            }
+            List<FieldCategory> fieldCategories = _store.GetFieldCategories(category.Id);
 
             counter = 1;
 
@@ -972,5 +979,26 @@ namespace DigiKala.Controllers
 
             return View(viewModel);
         }
+        public IActionResult ShowOrders()
+		{
+            var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+            var op = _context.OrderProducts.Include(op => op.Order).Include(op => op.Product).ThenInclude(p => p.Brand).Where(op => op.Product.StoreId == userId).OrderBy(op => op.Status).ToList();
+            return View(op);
+		}
+        [HttpGet]
+        public IActionResult ConfirmOrder(int? orderId, int? productId)
+        {
+            return View(new List<int>() { orderId.Value, productId.Value });
+        }
+        [HttpPost]
+        public IActionResult ConfirmOrder(int orderId,int productId)
+		{
+            var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+            var op = _context.OrderProducts.Include(op => op.Product).FirstOrDefault(op => op.OrderId==orderId && op.ProductId == productId && op.Product.StoreId==userId);
+            op.Status = OrderStatusEnum.ارسالشده;
+            _context.Update(op);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(ShowOrders));
+		}
     }
 }

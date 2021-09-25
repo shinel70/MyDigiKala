@@ -34,6 +34,7 @@ namespace DigiKala.DataAccessLayer.Entities
 		[Display(Name = "سایر توضیحات")]
 		[DataType(DataType.MultilineText)]
 		public string Desc { get; set; }
+		[Display(Name = "امتیاز")]
 		[Range(0, 5)]
 		public float Rating { get; set; } = 5;
 		[ForeignKey("BrandId")]

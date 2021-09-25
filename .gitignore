@@ -5,6 +5,7 @@
 
 # Migrations
 DigiKala.DataAccessLayer/Migrations
+DigiKala.DataAccessLayer/Parbad
 .vscode
 
 # User-specific files

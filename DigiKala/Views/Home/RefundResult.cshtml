@@ -1,0 +1,36 @@
+﻿@model Parbad.IPaymentRefundResult
+@{
+	ViewData["Title"] = "Refund result";
+}
+<div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" style="margin-top: 50px">
+	<table class="table">
+		<tr>
+			<td>شماره تراکنش</td>
+			<td>@Model.TrackingNumber</td>
+		</tr>
+		<tr>
+			<td>مبلغ</td>
+			<td>@Model.Amount</td>
+		</tr>
+		<tr>
+			<td>درگاه بانکی</td>
+			<td>@Model.GatewayName</td>
+		</tr>
+		<tr>
+			<td>نام حساب درگاه</td>
+			<td>@Model.GatewayAccountName</td>
+		</tr>
+		<tr>
+			<td>موفق شد؟</td>
+			<td>@Model.IsSucceed</td>
+		</tr>
+		<tr>
+			<td>وضعیت</td>
+			<td>@Model.Status</td>
+		</tr>
+		<tr>
+			<td>پیام</td>
+			<td class="text-lg">@Model.Message</td>
+		</tr>
+	</table>
+</div>

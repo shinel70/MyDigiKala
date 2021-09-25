@@ -1,8 +1,10 @@
-﻿@model IEnumerable<DigiKala.DataAccessLayer.Entities.BannerDetails>
+﻿@using System.Globalization
+@model IEnumerable<DigiKala.DataAccessLayer.Entities.BannerDetails>
 
 @{
     ViewData["Title"] = "نمایش بنر های جایگاه";
     Layout = "~/Views/Shared/_Panel.cshtml";
+    PersianCalendar pc = new PersianCalendar();
 }
 
 <div class="col-lg-offset-3 col-lg-8 col-md-offset-3 col-md-8 col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 panel-back">
@@ -54,10 +56,10 @@
                         @Html.DisplayFor(modelItem => item.Title)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.StartDateTime)
+                        @($"{pc.GetYear(item.StartDateTime)}/{pc.GetMonth(item.StartDateTime)}/{pc.GetDayOfMonth(item.StartDateTime)}")
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ExpireDateTime)
+                        @($"{pc.GetYear(item.ExpireDateTime)}/{pc.GetMonth(item.ExpireDateTime)}/{pc.GetDayOfMonth(item.ExpireDateTime)}")
                     </td>
                     <td>
                         <img src="~/images/ads/@item.Img" alt="تصویر پیدا نشد" class="img-responsive" width="100" height="55" />

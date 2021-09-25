@@ -1,8 +1,55 @@
-﻿
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IEnumerable<DigiKala.DataAccessLayer.Entities.Product>
 @{
-    ViewData["Title"] = "دیجی کالا";
-    Layout = "~/Views/Shared/_Site.cshtml";
+	ViewData["Title"] = "دیجی کالا";
+	Layout = "~/Views/Shared/_Site.cshtml";
 }
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
+	<div class="js-products">
 
+		<div class="listing-listing">
 
+			<ul class="listing-item">
+
+				<li style="display:block">
+
+					@foreach (var item in ViewBag.Products)
+					{
+						<div class="col-lg-2 col-md-4 col-sm-6 col-xs-12" style="padding: 0">
+
+							<div class="promotion-box">
+
+								<div class="product-seller-details">
+									<span class="product-main-seller">فروشنده : @item.Store.Name</span>
+								</div>
+
+								<a href="/Product/@item.Id/@item.Name.Replace(" ", "-")" class="promotion-box-image">
+									<img src="~/images/products/@item.Img" alt="@item.Name" />
+								</a>
+
+								<div class="product-box-content">
+									<a href="/Product/@item.Id/@item.Name.Replace(" ", "-")" class="product-box-title">@item.Name</a>
+								</div>
+
+								<div class="product-box-row">
+
+									<span class="product-box-row">@item.Price.ToString("n0") ریال</span>
+
+								</div>
+							</div>
+						</div>
+					}
+
+				</li>
+
+			</ul>
+
+		</div>
+
+	</div>
+	<span style="text-align:center">
+		@Html.PagedListPager((IPagedList)ViewBag.Products, page => Url.Action("Index", new { page }))
+	</span>
+</div>

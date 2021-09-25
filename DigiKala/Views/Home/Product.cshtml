@@ -102,12 +102,14 @@
 							@if (Model.FillProduct.Exist != 0)
 							{
 								<div class="basket-btn-area">
-									<button class="basket-btn" 
-									onclick="addToBasket({id: @Model.FillProduct.Id
+									<button class="basket-btn"
+										onclick="addToBasket({id: @Model.FillProduct.Id
 									,img: '@Model.FillProduct.Img'
 									,name: '@Model.FillProduct.Name'
 									,price: @Model.FillProduct.Price
-									,qty: 1})">افزودن به سبد خرید</button>
+									,qty: 1})">
+										افزودن به سبد خرید
+									</button>
 								</div>
 							}
 						</div>
@@ -133,11 +135,11 @@
 							توضیحات
 						</a>
 					</li>
-					<li class="nav-item tab-item">
+					@*<li class="nav-item tab-item">
 						<a href="#tab-2" class="nav-link tab-links" role="tab" data-toggle="tab">
-							نقد و بررسی
+						نقد و بررسی
 						</a>
-					</li>
+						</li>*@
 					<li class="nav-item tab-item">
 						<a href="#tab-3" class="nav-link tab-links" role="tab" data-toggle="tab">
 							نظرات
@@ -146,25 +148,38 @@
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" role="tabpanel" id="tab-1">
+						<table class="table table-striped">
+							<thead>
+								<h3 class="text-center">مشخصات کالا:</h3>
+							</thead>
+							@foreach (var item in Model.FillProduct.ProductFields)
+							{
+								<tr>
+									<td class="text-center">
+										@item.Field.Name
+									</td>
+									<td class="text-center">
+										@item.Value
+									</td>
+								</tr>
+							}
+						</table>
 
 						@Html.Raw(Model.FillProduct.Desc)
 
+
 					</div>
-					<div class="tab-pane" role="tabpanel" id="tab-2">
+					@*<div class="tab-pane" role="tabpanel" id="tab-2">
 
 						<p>نقد و بررسی در اینجا</p>
 
-					</div>
+						</div>*@
 					<div class="tab-pane" role="tabpanel" id="tab-3">
 						@if (User.Identity.IsAuthenticated)
 						{
 							<div class="row comments">
-								<form asp-controller="home" asp-action="AddComment">
-									<input type="hidden" name="productId" value="@Model.FillProduct.Id" />
-									<input type="hidden" name="depth" value="0" />
-									<input type="text" class="form-control" name="text" placeholder="نظر خودتو در مورد این کالا بنویس" />
-									<input type="submit" class="form-control btn btn-success btn-block" value="ثبت شود" />
-								</form>
+								<input type="text" class="form-control" placeholder="نظر خودتو در مورد این کالا بنویس" />
+								<button onclick="addComment(0,this.parentNode)" class="form-control btn btn-success btn-block">ثبت شود</button>
 							</div>
 						}
 						else
@@ -187,4 +202,5 @@
 <script src="~/js/jquery.min.js"></script>
 <script src="~/js/bootstrap.min.js"></script>
 <script src="~/js/main.js"></script>
+<script src="~/js/sweetalert.2.1.2.min.js"></script>
     }

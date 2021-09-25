@@ -56,7 +56,7 @@ namespace DigiKala.Core.Services
 
         public Product GetProductDetail(int id)
         {
-            return _context.Products.Include(p => p.Store).Include(p => p.Brand).Include(p => p.Category).Include(p => p.ProductGalleries).Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
+            return _context.Products.Include(p => p.Store).Include(p => p.Brand).Include(p => p.Category).Include(p => p.ProductGalleries).Include(p => p.Comments).Include(p => p.ProductFields).ThenInclude(pf => pf.Field).FirstOrDefault(p => p.Id == id);
         }
 
 

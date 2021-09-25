@@ -1,0 +1,24 @@
+﻿@model List<int>
+@{
+    Layout = null;
+}
+
+<h4 class="text-center">تایید سفارش</h4>
+<hr />
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-offset-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+        <form asp-action="ConfirmOrder">
+            <div asp-validation-summary="ModelOnly" class="text-success"></div>
+            <input name="orderId" value="@Model.First()" type="hidden" />
+            <input name="productId" value="@Model.Last()" type="hidden" />
+
+            <div class="form-group">
+                <h4>آیا از تایید این سفارش اطمینان دارید؟</h4>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="تایید" class="btn btn-success btn-block" />
+            </div>
+        </form>
+    </div>
+</div>

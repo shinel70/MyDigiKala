@@ -37,5 +37,11 @@ namespace DigiKala.DataAccessLayer.Entities
         [Display(Name = "کلمه عبور ایمیل")]
         [MaxLength(100, ErrorMessage = "مقدار {0} نباید بیش تر از {1} کاراکتر باشد")]
         public string MailPassword { get; set; }
-    }
+        [Display(Name ="شماره ترمینال بانک ملت")]
+		public long MellatTerminalId { get; set; }
+        [Display(Name ="نام کاربری بانک ملت")]
+		public string MellatUserName { get; set; }
+        [Display(Name ="پسورد کاربری بانک ملت")]
+		public string MellatPassword { get; set; }
+	}
 }

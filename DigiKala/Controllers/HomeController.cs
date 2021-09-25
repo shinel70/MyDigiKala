@@ -23,6 +23,10 @@ using Microsoft.Extensions.Caching.Memory;
 using DigiKala.Core.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Parbad;
+using Parbad.AspNetCore;
+using Parbad.Internal;
+using X.PagedList;
 
 namespace DigiKala.Controllers
 {
@@ -32,13 +36,15 @@ namespace DigiKala.Controllers
 		private readonly DatabaseContext _context;
 		private readonly IMapper _mapper;
 		private readonly IMemoryCache _cache;
+		private readonly IOnlinePayment _onlinePayment;
 
-		public HomeController(ITemp temp, DatabaseContext context, IMapper mapper, IMemoryCache cache)
+		public HomeController(ITemp temp, DatabaseContext context, IMapper mapper, IMemoryCache cache, IOnlinePayment onlinePayment)
 		{
 			_temp = temp;
 			_context = context;
 			_mapper = mapper;
 			_cache = cache;
+			_onlinePayment = onlinePayment;
 		}
 
 		[Route("Home/SearchByCategory/{CategoryName}")]
@@ -79,13 +85,7 @@ namespace DigiKala.Controllers
 
 			return View(viewmodel);
 		}
-		[Role]
-		public IActionResult Dashboard()
-		{
-			return View();
-		}
-
-		public IActionResult Index()
+		public IActionResult Index(int? page)
 		{
 			List<BannerDetails> bannerDetails = _temp.GetBannerDetailsNoExpire();
 
@@ -99,7 +99,8 @@ namespace DigiKala.Controllers
 					}
 				}
 			}
-
+			var products = _context.Products.Include(p => p.Store).ToPagedList(page ?? 1, 18);
+			ViewBag.products = products;
 			return View();
 		}
 
@@ -113,7 +114,6 @@ namespace DigiKala.Controllers
 		[Route("/Product/{id}/{title}")]
 		public IActionResult Product(int id, string title)
 		{
-
 			var viewModel = new ProductDetailsViewModel();
 			Product product = _temp.GetProductDetail(id);
 
@@ -149,27 +149,187 @@ namespace DigiKala.Controllers
 			viewModel.FillProduct = product;
 			return View(viewModel);
 		}
+		[Authorize, HttpGet]
+		public IActionResult AddOrder([FromQuery(Name = "productIdQties")] string productIdQties)
+		{
+			var requestedProducts = JsonConvert.DeserializeObject<List<RequestedProductIds>>(productIdQties);
+			Order order = new Order()
+			{
+				User = _context.Users.Include(u => u.Addresses).FirstOrDefault(u => u.Mobile == User.Identity.Name),
+				StartDateTime = DateTime.Now,
+				OrderProducts = new List<OrderProduct>()
+			};
+			List<Product> products = _context.Products.ToList().Where(p => requestedProducts.Any(vm => vm.Id == p.Id)).ToList();
+			foreach (var product in products)
+			{
+				var foo = requestedProducts.Find(vm => vm.Id == product.Id);
+				order.OrderProducts.Add(new OrderProduct() { Product = product, ProductId = product.Id, Qty = (foo.Qty < product.Exist && foo.Qty > 0 /*&& foo.Qty<20*/) ? foo.Qty : 0 });
+			}
+			return View(order);
+		}
+		[Authorize, HttpPost]
+		public IActionResult AddOrder(string productIdQties, [FromForm(Name = "UserAddress")] int userAddressId, string address, bool isAddressBecomeSave)
+		{
+			var requestedProducts = JsonConvert.DeserializeObject<List<RequestedProductIds>>(productIdQties);
+			Order order = new Order()
+			{
+				User = _context.Users.Include(u => u.Addresses).FirstOrDefault(u => u.Mobile == User.Identity.Name),
+				StartDateTime = DateTime.Now,
+				OrderProducts = new List<OrderProduct>()
+			};
+			List<Product> products = _context.Products.ToList().Where(p => requestedProducts.Any(vm => vm.Id == p.Id)).ToList();
+			foreach (var product in products)
+			{
+				var foo = requestedProducts.Find(vm => vm.Id == product.Id);
+				order.OrderProducts.Add(new OrderProduct()
+				{
+					Product = product,
+					ProductId = product.Id,
+					Qty = (foo.Qty < product.Exist && foo.Qty > 0 /*&& foo.Qty<20*/) ? foo.Qty : 0,
+					Price = product.Price,
+					DeletePrice = product.DeletePrice,
+				});
+			}
+			if (address == null)
+			{
+				if (userAddressId == 0)
+				{
+					ModelState.AddModelError("address", "لطفا آدرسی انتخاب کنید");
+					return View(order);
+				}
+				var findAddress = order.User.Addresses.FirstOrDefault(a => a.Id == userAddressId);
+				if (findAddress == null)
+				{
+					ModelState.AddModelError("address", "لطفا آدرس صحیح انتخاب کنید");
+					return View(order);
+				}
+				order.Address = findAddress.Address;
+			}
+			else
+			{
+				if (isAddressBecomeSave)
+				{
+					UserAddress userAddress = new UserAddress() { UserId = order.User.Id, Address = order.Address };
+					_context.UserAddresses.Add(userAddress);
+					_context.SaveChanges();
+				}
+				order.Address = address;
+			}
+			string callBackUrl = Url.Action("ConfirmOrder", "Home", new { query = JsonConvert.SerializeObject(requestedProducts) }, Request.Scheme);
+			var result = _onlinePayment.Request(invoice =>
+			{
+				invoice.SetAmount(order.OrderProducts.Aggregate(Convert.ToUInt64(0), (acc, op) => acc + (op.Price * Convert.ToUInt64(op.Qty))))
+				.UseAutoIncrementTrackingNumber()
+				.SetCallbackUrl(callBackUrl)
+				.SetGateway("ParbadVirtual");
+			});
+			if (result.IsSucceed)
+			{
+				order.TrackingNumber = result.TrackingNumber;
+				_context.Orders.Add(order);
+				_context.SaveChanges();
+				return result.GatewayTransporter.TransportToGateway();
+			}
+			ModelState.AddModelError("address", "در ارتباط به درگاه پرداخت مشکلی پیش آمده لطفا مجددا تلاش کنید");
+			return View(order);
+		}
+		[Authorize, HttpGet, HttpPost]
+		public IActionResult ConfirmOrder(string query)
+		{
+			IPaymentFetchResult invoice = _onlinePayment.Fetch();
+			if (invoice.Status == PaymentFetchResultStatus.AlreadyProcessed)
+			{
+				return Content("این پرداخت قبلا انجام شده است");
+			}
+			var requestedProducts = JsonConvert.DeserializeObject<List<RequestedProductIds>>(query);
+			List<Product> products = _context.Products.Include(p => p.Store).ToList().Where(p => requestedProducts.Any(vm => vm.Id == p.Id)).ToList();
+
+			if (!products.All(p => requestedProducts.First(rp => rp.Id == p.Id).Qty < p.Exist))
+			{
+				var cancelResult = _onlinePayment.Cancel(invoice, cancellationReason: "متاسفانه برخی از محصولات موجودی شان تمام شده لطفا روند خرید را از ابتدا انجام بدهید");
+				return View("CancelResult", cancelResult);
+			}
+			products.ForEach(p =>
+			{
+				var reqProduct = requestedProducts.First(rp => rp.Id == p.Id);
+				p.Exist -= reqProduct.Qty;
+				p.Store.Wallet += Convert.ToUInt64(reqProduct.Qty) * p.Price;
+			});
+			_context.Products.UpdateRange(products);
+			_context.SaveChanges();
+			var verifyResult = _onlinePayment.Verify(invoice);
+			return View(verifyResult);
+		}
+		[Authorize]
 		public IActionResult ShowOrders()
 		{
-			if (!User.Identity.IsAuthenticated)
-				return Redirect("/Accounts/Register");
-			User user = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name);
-			return Ok();
+			int userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+			var orders = _context.Orders.Include(o => o.OrderProducts).ThenInclude(op => op.Product).Where(o => o.UserId == userId).ToList();
+			orders.ForEach(o =>
+			{
+				if (o.Status == OrderStatusEnum.درحالارسال)
+					if (o.OrderProducts.All(op => op.Status == OrderStatusEnum.ارسالشده))
+						o.Status = OrderStatusEnum.ارسالشده;
+			});
+			return View(orders);
 		}
-		//[Authorize]
 		[HttpGet]
-		public IActionResult AddOrder([FromQuery(Name = "productIdQties")]string productIdQties)
+		public IActionResult DetailsOrder(int id)
 		{
-			var viewModels = JsonConvert.DeserializeObject<List<AddOrderHttpGetViewModel>>(productIdQties);
-			AddOrderViewModel addOrderViewModel = new AddOrderViewModel();
-			addOrderViewModel.Products = _context.Products.Where(p => viewModels.Any(vm => vm.Id == p.Id) && p.Exist > 0).ToList();
-			addOrderViewModel.User = _context.Users.Include(u => u.Addresses).FirstOrDefault(u => u.Mobile == User.Identity.Name);
-			return View(viewModels);
+			var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+			var order = _context.Orders.Include(o => o.OrderProducts).ThenInclude(op => op.Product).ThenInclude(p => p.Store).FirstOrDefault(o => o.UserId == userId && o.Id == id);
+			return View(order);
 		}
-		[HttpPost]
-		public IActionResult AddOrder(AddOrderViewModel viewModel)
+		[HttpGet, Authorize]
+		public IActionResult CancelOrder(int? id)
 		{
 			return View();
+		}
+		[HttpPost, Authorize]
+		public IActionResult CancelOrder(int id)
+		{
+			var userId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+			var order = _context.Orders.Include(o => o.OrderProducts).FirstOrDefault(o => o.UserId == userId && o.Id == id);
+			if (order == null)
+				return RedirectToAction(nameof(ShowOrders));
+			if (order.Status == OrderStatusEnum.درحالارسال)
+			{
+				var result = _onlinePayment.RefundCompletely(order.TrackingNumber);
+				order.Status = OrderStatusEnum.لغوشده;
+				order.OrderProducts.AsParallel().ForAll(op => op.Status = OrderStatusEnum.لغوشده);
+				_context.Update(order);
+				_context.SaveChanges();
+			}
+			return RedirectToAction(nameof(ShowOrders));
+		}
+		[Authorize, HttpGet]
+		public IActionResult UserInformation()
+		{
+			var user = _context.Users.Include(u => u.Addresses).FirstOrDefault(u => u.Mobile == User.Identity.Name);
+			ViewBag.MyMessage = false;
+			return View(user);
+		}
+		[Authorize, HttpPost]
+		public IActionResult UserInformation(User user)
+		{
+			ModelState.Remove("Mobile");
+			if (!ModelState.IsValid)
+			{
+				ViewBag.MyMessage = false;
+				return View(user);
+			}
+			var userEntity = _context.Users.Include(u => u.Addresses).FirstOrDefault(u => u.Mobile == User.Identity.Name);
+			userEntity.Addresses = user.Addresses;
+			userEntity.FullName = user.FullName;
+			userEntity.Code = user.Code;
+			if (user.Password != userEntity.Password)
+			{
+				userEntity.Password = HashGenerators.MD5Encoding(user.Password);
+			}
+			_context.Update(userEntity);
+			_context.SaveChanges();
+			ViewBag.MyMessage = true;
+			return View(user);
 		}
 
 		#region api
@@ -195,10 +355,19 @@ namespace DigiKala.Controllers
 		}
 		public IActionResult LikeComment(int commentId)
 		{
+			ResponseService<bool> response = new Core.Dtoes.ResponseService<bool>();
 			if (!User.Identity.IsAuthenticated)
-				return BadRequest(new { data = "لطفا ابتدا احراز هویت کنید" });
+			{
+				response.Data = false;
+				response.Message = "لطفا ابتدا احراز هویت کنید";
+				return BadRequest(response);
+			}
 			if (!_context.Comments.Any(c => c.Id == commentId))
-				return BadRequest(new { data = "لطفا ما را امتحان نکنید" });
+			{
+				response.Data = false;
+				response.Message = "لطفا ما را امتحان نکنید";
+				return BadRequest(response);
+			}
 			var mobileNumber = User.Identity.Name;
 			var user = _context.Users.Include(u => u.CommentLikes).FirstOrDefault(u => u.Mobile == mobileNumber);
 			var commentLike = user.CommentLikes.FirstOrDefault(cl => cl.CommentId == commentId);
@@ -210,20 +379,48 @@ namespace DigiKala.Controllers
 				_context.CommentLikes.Add(commentLike);
 			}
 			_context.SaveChanges();
-			return Ok(new { data = "عملیات با موفقیت انجام شد" });
+			response.Data = true;
+			response.Message = "عملیات با موفقیت انجام شد";
+			return Ok(response);
 		}
-		public IActionResult AddComment(AddCommentDto Dto)
+		[HttpGet]
+		public IActionResult AddComment(int productId, int replyCommentId, string text)
 		{
-			ModelState.Remove("Depth");
+			ResponseService<GetCommentDto> response = new Core.Dtoes.ResponseService<GetCommentDto>();
+
+			var addCommentDto = new AddCommentDto();
 			if (!User.Identity.IsAuthenticated)
-				return Unauthorized();
-			Dto.UserId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
-			if (!ModelState.IsValid)
-				return BadRequest();
-			var comment = _mapper.Map<Comment>(Dto);
+			{
+				response.Success = false;
+				response.Message = "لطفا ابتدا احراز هویت کنید";
+				return Unauthorized(response);
+			}
+			int depth = 0;
+			if (replyCommentId != 0)
+			{
+				Comment parent = _context.Comments.FirstOrDefault(c => c.Id == replyCommentId);
+				for (depth = 1; parent != null && parent.ReplyCommentId != null; depth++)
+				{
+					parent = _context.Comments.FirstOrDefault(c => c.Id == parent.ReplyCommentId);
+				}
+				addCommentDto.ReplyCommentId = replyCommentId;
+			}
+			addCommentDto.UserId = _context.Users.FirstOrDefault(u => u.Mobile == User.Identity.Name).Id;
+			addCommentDto.ProductId = productId;
+			addCommentDto.Text = text;
+			addCommentDto.Depth = depth;
+			if (!ModelState.IsValid || text.Length > 100)
+			{
+				response.Success = false;
+				response.Message = "لطفا مقادیر را بررسی کنید و دوباره ارسال کنید";
+				return BadRequest(response);
+			}
+			var comment = _mapper.Map<Comment>(addCommentDto);
 			_context.Add(comment);
 			_context.SaveChanges();
-			return NoContent();
+			response.Message = "نظر شما ثبت شد";
+			response.Data = _mapper.Map<GetCommentDto>(comment);
+			return Ok(response);
 		}
 
 		#endregion

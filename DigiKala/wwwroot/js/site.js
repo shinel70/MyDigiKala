@@ -24,6 +24,7 @@
 		if (itemsInBasket == undefined || itemsInBasket.length == 0)
 		{
 			basket.innerHTML = text;
+			document.getElementById("basketCount").innerHTML = "";
 		}
 		else
 		{
@@ -38,7 +39,7 @@
 				text += `<tr id="${itemsInBasket[i].id}">
 						<td><img style="max-width:25px;max-height:25px;" src="/images/products/${itemsInBasket[i].img}" /></td>
 						<td>${itemsInBasket[i].name}</td>
-						<td>${itemsInBasket[i].price.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFrationDigit: 0 })}ریال</td>
+						<td>${itemsInBasket[i].price.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFrationDigit: 0 })} ریال</td>
 						<td style="white-space:nowrap;">
 							<i onClick="addQty(this.parentNode)" class="fa fa-plus-circle text-success" style="cursor:pointer;"></i>
 							<span id="qty">${itemsInBasket[i].qty}</span>
@@ -48,7 +49,7 @@
 							<span id="qtySum">${totalItemPrice.toLocaleString('fa-IR', {
 					minimumFractionDigits: 0,
 					maximumFrationDigit: 0
-							})}ریال</span>
+							})} ریال</span>
 						</td>
 					</tr>`
 			}
@@ -56,6 +57,11 @@
 			text += `<tr><td colspan="4"><a class="btn btn-danger btn-block" href='/home/AddOrder?productIdQties=${JSON.stringify(productIdQties)}'>ثبت خرید</a></td><td>${totalPrice.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFrationDigit: 0 })}ریال</td></tr>`;
 		}
 		basket.innerHTML = text;
+		let foo = itemsInBasket.reduce((total, obj) => total.qty += obj.qty);
+		if (itemsInBasket.length == 1)
+			document.getElementById("basketCount").innerHTML = foo.qty;
+		else
+			document.getElementById("basketCount").innerHTML = foo;
 	}
 	catch (e)
 	{
@@ -119,3 +125,16 @@ function minusQty(tdQty)
 }
 
 refreshViewBasket();
+
+function MyBanners()
+{
+	$.ajax({
+		url: "/Home/Banners/",
+		type: "Get",
+		data: {}
+	}).done(function (result)
+	{
+		$('#myModal').modal('show');
+		$('#bodyModal').html(result);
+	});
+}

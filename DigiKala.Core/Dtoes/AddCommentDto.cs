@@ -18,6 +18,7 @@ namespace DigiKala.Core.Dtoes
 		public string Text { get; set; }
 		[Required]
 		public int Depth { get; set; } = 0;
+		[Display(Name ="تاریخ ثبت نظر")]
 		public DateTime DateTime { get; set; } = DateTime.Now;
 	}
 }

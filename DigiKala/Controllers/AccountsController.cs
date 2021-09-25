@@ -141,7 +141,7 @@ namespace DigiKala.Controllers
                 }
                 else if (user.Role.Name.IndexOf(StaticData.Store) > -1)
                     return RedirectToAction("Dashboard", "Panel");
-                return RedirectToAction("Dashboard", "Home");
+                return RedirectToAction("Dashboard", "Panel");
             }
             else
             {

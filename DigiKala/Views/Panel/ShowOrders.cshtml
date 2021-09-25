@@ -1,5 +1,5 @@
 ﻿@using System.Globalization
-@model IEnumerable<DigiKala.DataAccessLayer.Entities.Order>
+@model IEnumerable<DigiKala.DataAccessLayer.Entities.OrderProduct>
 
 @{
 	ViewData["Title"] = "نمایش  سفارش ها";
@@ -12,7 +12,7 @@
 	<div class="margin-top-50">
 
 		<h3 class="pull-right">
-			سفارش ها
+			سفارش های فروش
 		</h3>
 		<h3 class="pull-left">
 			<input type="text" id="myInput" onkeyup="myfunction()" placeholder="جستجو ..." />
@@ -29,16 +29,25 @@
 				<tr>
 
 					<th>
-						@Html.DisplayNameFor(model => model.Address)
+						@Html.DisplayNameFor(model => model.Product.Img)
 					</th>
 					<th>
-						@Html.DisplayNameFor(model => model.StartDateTime)
+						@Html.DisplayNameFor(model => model.Product.Name)
 					</th>
 					<th>
-						@Html.DisplayNameFor(model => model.CloseDateTime)
+						@Html.DisplayNameFor(model => model.Product.Brand.Name)
 					</th>
 					<th>
-						@Html.DisplayNameFor(model => model.TrackingNumber)
+						@Html.DisplayNameFor(model => model.Order.StartDateTime)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Order.Address)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Price)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Qty)
 					</th>
 					<th>
 						@Html.DisplayNameFor(model => model.Status)
@@ -53,26 +62,32 @@
 				{
 					<tr>
 						<td>
-							@Html.DisplayFor(modelItem => item.Address)
+							<img src="~/images/products/@item.Product.Img" style="max-width:25px;max-height:25px" />
 						</td>
 						<td>
-							@($"{pc.GetYear(item.StartDateTime)}-{pc.GetMonth(item.StartDateTime)}-{pc.GetDayOfMonth(item.StartDateTime)} {item.StartDateTime.ToString("H:m:s")}")
+							@Html.DisplayFor(modelItem => item.Product.Name)
 						</td>
 						<td>
-							@if (item.CloseDateTime != null)
-							{
-								@($"{pc.GetYear(item.CloseDateTime.Value)}-{pc.GetMonth(item.CloseDateTime.Value)}-{pc.GetDayOfMonth(item.CloseDateTime.Value)} {item.CloseDateTime.Value.ToString("H:m:s")}")
-							}
+							@Html.DisplayFor(modelItem => item.Product.Brand.Name)
 						</td>
 						<td>
-							@Html.DisplayFor(modelItem => item.TrackingNumber)
+							@($"{pc.GetYear(item.Order.StartDateTime)}-{pc.GetMonth(item.Order.StartDateTime)}-{pc.GetDayOfMonth(item.Order.StartDateTime)} {item.Order.StartDateTime.ToString("H:m:s")}")
 						</td>
 						<td>
-							@if(item.Status == DigiKala.DataAccessLayer.Entities.OrderStatusEnum.ارسالشده)
+							@Html.DisplayFor(modelItem => item.Order.Address)
+						</td>
+						<td>
+							@item.Price.ToString("n0")
+						</td>
+						<td>
+							@item.Qty
+						</td>
+						<td>
+							@if (item.Status == DigiKala.DataAccessLayer.Entities.OrderStatusEnum.ارسالشده)
 							{
 								<span class="btn-xs btn-success">@item.Status</span>
 							}
-							else if(item.Status == DigiKala.DataAccessLayer.Entities.OrderStatusEnum.لغوشده)
+							else if (item.Status == DigiKala.DataAccessLayer.Entities.OrderStatusEnum.لغوشده)
 							{
 								<span class="btn-xs btn-danger">@item.Status</span>
 							}
@@ -83,14 +98,17 @@
 
 						</td>
 						<td>
-							<span>@item.OrderProducts.Aggregate(Convert.ToUInt64(0),(acc,op) => acc + (op.Price * Convert.ToUInt64(op.Qty))).ToString("n0") ریال</span>
+							<span>@((item.Price*(ulong)item.Qty).ToString("n0")) ریال</span>
 						</td>
-						<td>
-							<a href="#" onclick="MyDetails(@item.Id)" class="btn-xs btn-info">جزئیات</a> |
+						<td style="white-space:nowrap">
 							@if (item.Status == DigiKala.DataAccessLayer.Entities.OrderStatusEnum.درحالارسال)
 							{
-								<a href="#" onclick="CancelOrder(@item.Id)" class="btn-xs btn-danger">لغو سفارش</a>
+								<a href="#" onclick="ConfirmOrder(@item.OrderId,@item.ProductId)" class="btn-xs btn-info">تایید سفارش</a>
 							}
+							@*@if (item.Status == DigiKala.DataAccessLayer.Entities.OrderStatusEnum.درحالارسال)
+								{
+								<a href="#" onclick="CancelOrder(@item.OrderId,@item.ProductId)" class="btn-xs btn-danger">لغو سفارش</a>
+								}*@
 						</td>
 					</tr>
 				}
@@ -151,9 +169,9 @@
 
 
 <script>
-	function MyDetails(id) {
+	function ConfirmOrder(orderId,productId) {
 		$.ajax({
-			url: "/Home/DetailsOrder/" + id,
+			url: "/Panel/ConfirmOrder/?orderId=" + orderId + "&productId=" +productId,
 			type: "Get",
 			data: {}
 		}).done(function (result) {
@@ -164,9 +182,9 @@
 </script>
 
 <script>
-	function CancelOrder(id) {
+	function CancelOrder(orderId,productId) {
 		$.ajax({
-			url: "/Home/CancelOrder/" + id,
+			url: "/Panel/CancelOrder/?orderId=" + orderId + "&productId=" +productId,
 			type: "Get",
 			data: {}
 		}).done(function (result) {

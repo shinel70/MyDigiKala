@@ -1,0 +1,94 @@
+﻿@model DigiKala.DataAccessLayer.Entities.User
+
+@{
+	ViewData["Title"] = "اطلاعات کاربری";
+	Layout = "~/Views/Shared/_Panel.cshtml";
+}
+<div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+
+	<h1 class="text-center">اطلاعات کاربر</h1>
+
+	<div class="row margin-top-30">
+		<form asp-action="UserInformation" asp-controller="Home">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			@if (ViewBag.MyMessage)
+			{
+				<div class="form-group">
+					<div class="alert alert-success text-center">
+						<h4 class="text-center">
+							تغییرات با موفقیت اعمال شد
+						</h4>
+					</div>
+				</div>
+			}
+			<input type="hidden" asp-for="Id" />
+			<div class="form-group">
+				<label asp-for="Mobile" class="control-label"></label>
+				<input asp-for="Mobile" class="form-control" disabled="disabled" />
+				<span asp-validation-for="Mobile" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Password" class="control-label"></label>
+				<input asp-for="Password" class="form-control" />
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Code" class="control-label"></label>
+				<input asp-for="Code" class="form-control" />
+				<span asp-validation-for="Code" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FullName" class="control-label"></label>
+				<input asp-for="FullName" class="form-control" />
+				<span asp-validation-for="FullName" class="text-danger"></span>
+			</div>
+			<div id="Addresses">
+
+				@for (int i = 0; i < Model.Addresses.Count; i++)
+				{
+					<div class="form-group">
+						<label asp-for="Addresses[i].Address" class="control-label"></label>
+						<input asp-for="Addresses[i].Address" class="form-control" />
+						<span asp-validation-for="Addresses[i].Address" class="text-danger"></span>
+					</div>
+				}
+				@if (Model.Addresses.Count <= 5)
+				{
+					<div class="form-group" id="btnAdd">
+						<span class="btn btn-info" style="cursor:pointer" onclick="AddAddress(@Model.Addresses.Count)">افزودن آدرس</span>
+					</div>
+				}
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-block btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+
+@section mySection
+{
+<script>
+	var index=0;
+	var first = true;
+	function AddAddress(addressIndex)
+	{
+		if(first)
+		{
+			first=false;
+			index = addressIndex;
+		}
+		if(index >= 5)
+		{
+			document.getElementById("btnAdd").style.display="none";
+		}
+		else
+		{
+		let el = document.getElementById("Addresses");
+		el.innerHTML += `<div class="form-group"><label class="control-label">آدرس جدید</label><input class="form-control" type="text" name="Addresses[${index}].Address" /></div><span class="text-danger field-validation-valid" data-valmsg-for="Addresses[${index}].Address" data-valmsg-replace="true"></span>`;
+		index++;
+		}
+	}
+</script>
+}

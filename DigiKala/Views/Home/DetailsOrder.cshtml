@@ -1,0 +1,83 @@
+﻿@using System.Globalization
+@model DigiKala.DataAccessLayer.Entities.Order
+
+@{
+	ViewData["Title"] = "DetailsOrder";
+	Layout = null;
+	PersianCalendar pc = new PersianCalendar();
+	ulong totalPrice = 0;
+
+}
+
+<table class="table table-bordered table-hover" id="myTable">
+
+	<thead>
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.OrderProducts[0].Product.Img)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.OrderProducts[0].Product.Name)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.OrderProducts[0].Product.Store.Name)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.OrderProducts[0].Price) ریال
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.OrderProducts[0].Qty)
+			</th>
+
+			<th>
+				قیمت کل
+			</th>
+		</tr>
+
+	</thead>
+
+	<tbody>
+
+		@foreach (var item in Model.OrderProducts)
+		{
+			var sum = (item.Price * Convert.ToUInt64(item.Qty));
+			totalPrice += sum;
+			<tr>
+				<td>
+					<img style="max-width:25px;max-height:25px;" src="~/images/products/@item.Product.Img" />
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Product.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Product.Store.Name)
+				</td>
+				<td>
+					@if (item.DeletePrice != 0)
+					{
+						<del style="color:red">@item.DeletePrice.ToString("n0")</del>
+					}
+					<span>@item.Price.ToString("n0")</span>
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Qty)
+				</td>
+				<td>
+					@(sum.ToString("n0"))
+				</td>
+
+			</tr>
+		}
+		<tr>
+			<td colspan="5">
+				جمع کل مبالغ
+			</td>
+			<td>
+				@totalPrice.ToString("n0")
+			</td>
+		</tr>
+	</tbody>
+
+</table>
+

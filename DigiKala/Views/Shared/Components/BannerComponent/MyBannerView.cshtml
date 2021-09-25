@@ -11,8 +11,8 @@
 
         @if (scope.CheckBanner(item.Id))
         {
-            <a href="@scope.GetBanner(item.Id).Url" target="_blank">
-                <img src="~/images/ads/@scope.GetBanner(item.Id).Img" alt="@item.Name" class="img-responsive" />
+            <a href="http://@scope.GetBanner(item.Id).Url" target="_blank">
+                <img style="max-height:240px;" src="~/images/ads/@scope.GetBanner(item.Id).Img" alt="@item.Name" class="img-responsive" />
             </a>
         }
         else

@@ -51,18 +51,21 @@ function imageZoom(imageId)
 		let pos = getCursor();
 		let zoomImgPosTop = img.offsetTop + (pos.y) - (lens.offsetHeight / 2);
 		let zoomImgposLeft = img.offsetLeft + (pos.x) - (lens.offsetWidth / 2);
-		if (zoomImgPosTop < 0)
-			zoomImgPosTop = 0;
+		if (zoomImgPosTop < -lens.offsetHeight/2)
+			zoomImgPosTop = -lens.offsetHeight/2;
 		else if (zoomImgPosTop > img.offsetTop + img.offsetHeight - (lens.offsetHeight / 2))
 			zoomImgPosTop = img.offsetTop + img.offsetHeight - (lens.offsetHeight / 2);
-		if (zoomImgposLeft < 0)
-			zoomImgposLeft = 0;
+		if (zoomImgposLeft < -lens.offsetWidth/2)
+			zoomImgposLeft = -lens.offsetWidth/2;
 		else if (zoomImgposLeft > img.offsetLeft + img.offsetWidth - (lens.offsetHeight / 2))
 			zoomImgposLeft = img.offsetLeft + img.offsetWidth - (lens.offsetHeight / 2);
-
+		if (pos.x <= 0)
+			pos.x = 0;
+		if (pos.y <= 0)
+			pos.y = 0;
 		lens.style.top = zoomImgPosTop + "px";
 		lens.style.left = zoomImgposLeft + "px";
-		lens.style.backgroundPosition = "-" + ((pos.x * ratio) - (lens.offsetWidth / 2)) + "px -" + ((pos.y * ratio) - (lens.offsetWidth / 2)) + "px";
+		lens.style.backgroundPosition =  -1*(((pos.x * ratio) - (lens.offsetWidth / 2))) + "px " + (-1*(((pos.y * ratio) - (lens.offsetHeight / 2)))) + "px";
 	}
 
 	function getCursor()
@@ -104,11 +107,12 @@ $(window).scroll(function ()
 			success: function (data)
 			{
 				dataFromServer = data;
-				document.getElementById("tab-3").innerHTML += showTreeForList();
+				if(data.length != 0)
+					document.getElementById("tab-3").innerHTML += showTreeForList();
 			},
 			error: function (data)
 			{
-				window.alert("مشکلی پیش اومده");
+				swal("خطایی پیش آمده", "در بارگذاری نظرات خطایی پیش آمده لطفا بعدا مجددا تلاش نمایید", "warning");
 			}
 		});
 
@@ -128,7 +132,7 @@ $(window).scroll(function ()
 		{
 			var text = `<div class="row comment comment${comment.replyCommentId}" style="margin-right:${comment.depth * 4}%; ${comment.replyCommentId != null ? "display:none" : ""}">
 							<p style="display:none">${comment.userId}</p>
-							<h3>${comment.userFullName != null ? comment.user.fullName : "کاربر فروشگاه"}
+							<h3>${comment.userFullName != null ? comment.userFullName : "کاربر فروشگاه"}
 								<b>${new Date(comment.dateTime).toLocaleString("fa-IR")}</b></h3>
 							<p>
 								${comment.text}
@@ -166,7 +170,7 @@ function likeComment(commentId, btn)
 		data: "commentId=" + commentId,
 		success: function (data)
 		{
-			window.alert(data);
+			swal("عملیات انجام شد", data.message, "success");
 			if (btn.classList.contains("btn-success"))
 				btn.classList.remove("btn-success");
 			else
@@ -174,7 +178,7 @@ function likeComment(commentId, btn)
 		},
 		error: function (data)
 		{
-			window.alert(data.responseJSON.data);
+			swal("عملیات با خطا مواجه شد", data.responseJSON.message, "error");
 		}
 	});
 }
@@ -182,15 +186,9 @@ function replyComment(commentId, commentDepth, replybtn)
 {
 	let productId = document.URL.split("/")[4];
 	let t = replybtn.parentElement;
-	let f = replybtn.parentNode;
 	t.innerHTML += `<div class="row comments style="margin-right:${commentDepth * 4}%;">
-						<form action="/home/AddComment">
-							<input type="hidden" name="productId" value="${productId}" />
-							<input type="hidden" name="replyCommentId" value="${commentId}" />	
-							<input type="hidden" name="depth" value="${commentDepth+1}" />
 							<input type="text" name="text" class="form-control" placeholder="جواب کامنت رو بنویس"/>
-							<input type="submit" class="form-control btn btn-success btn-block" value="ثبت شود"/>
-						</form>
+							<button onClick="addComment(${commentId},this.parentNode)" class="form-control btn btn-success btn-block">ثبت شود </button>
 					</div>`
 }
 function toggleReplies(replyCommentId, btnElement)
@@ -209,4 +207,53 @@ function toggleReplies(replyCommentId, btnElement)
 			btnElement.innerHTML = "نمایش پاسخ ها";
 		}
 	}
+}
+function addComment(replyCommentId, element)
+{
+	let productId = document.URL.split("/")[4];
+	let input = element.getElementsByTagName("input")[0];
+	const comment = {
+		productId: productId,
+		ReplyCommentId: replyCommentId,
+		text: input.value
+	}
+	$.ajax({
+		type: "GET",
+		url: "/Home/AddComment/",
+		data: comment,
+		dataType: "json",
+		crossOrigin: true,
+		contentType: 'application/json',
+		success: function (data)
+		{
+			swal("عملیات انجام شد", data.message, "success");
+			let text = `
+							<p style="display:none">${data.data.userId}</p>
+							<h3>${data.data.userFullName != null ? data.data.userFullName : "کاربر فروشگاه"}
+								<b>${new Date(data.data.dateTime).toLocaleString("fa-IR")}</b></h3>
+							<p>
+								${data.data.text}
+							</p>
+							<button class="btn btn-small" onClick="likeComment(${data.data.id},this)"><i class="fa fa-thumbs-up"></i></button>
+							<button class="btn btn-small btn-info" onClick="replyComment(${data.data.id},${data.data.depth},this)">پاسخ دادن به این نظر</button>
+							${data.data.childComments.length == 0 ? "" : '<button class="btn btn-small btn-warning" onClick="toggleReplies(\'comment' + data.data.id + '\',this)">نمایش پاسخ ها</button>'}
+						`;
+			const newComment = document.createElement("div");
+			newComment.classList.add("row","comment", `comment${data.data.replyCommentId}`);
+			newComment.style.marginRight = data.data.depth * 4 + "%";
+			newComment.innerHTML = text;
+			if (data.data.replyCommentId)
+			{
+				element.parentElement.insertAdjacentElement("afterend", newComment);
+			}
+			else
+			{
+				element.insertAdjacentElement("afterend", newComment);
+			}
+		},
+		error: function (data)
+		{
+			swal("عملیات با خطا مواجه شد", data.responseJSON.message, "error");
+		}
+	});
 }

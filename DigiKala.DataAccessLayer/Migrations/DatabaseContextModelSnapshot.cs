@@ -294,6 +294,12 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TrackingNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -312,8 +318,20 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("DeletePrice")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
                     b.Property<float?>("Rating")
                         .HasColumnType("real");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("ProductId", "OrderId");
 
@@ -529,6 +547,15 @@ namespace DigiKala.DataAccessLayer.Migrations
                     b.Property<string>("MailPassword")
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
+
+                    b.Property<string>("MellatPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("MellatTerminalId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("MellatUserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SiteDesc")
                         .HasColumnType("nvarchar(max)");

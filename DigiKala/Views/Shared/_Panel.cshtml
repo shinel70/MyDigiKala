@@ -5,331 +5,336 @@
 @inject PanelLayoutScope scope
 
 @{
-    string roleName = scope.GetUserRoleName(User.Identity.Name);
+	string roleName = scope.GetUserRoleName(User.Identity.Name);
 
-    int adminBell = scope.GetBrandsCount();
+	int adminBell = scope.GetBrandsCount();
 }
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>@ViewBag.Title</title>
+	<title>@ViewBag.Title</title>
 
-    <link href="~/css/bootstrap-rtl.min.css" rel="stylesheet" />
-    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="~/css/panel.css" rel="stylesheet" />
+	<link href="~/css/bootstrap-rtl.min.css" rel="stylesheet" />
+	<link href="~/css/font-awesome.min.css" rel="stylesheet" />
+	<link href="~/css/panel.css" rel="stylesheet" />
 
-    <link href="~/css/PersianDatePicker.min.css" rel="stylesheet" />
-    <script src="~/js/PersianDatePicker.min.js"></script>
+	<link href="~/css/PersianDatePicker.min.css" rel="stylesheet" />
+	<script src="~/js/PersianDatePicker.min.js"></script>
 </head>
 <body>
 
-    <div class="page-wrapper chiller-theme toggled">
+	<div class="page-wrapper chiller-theme toggled">
 
-        <a href="#" id="show-sidebar" class="btn btn-sm btn-dark">
-            <i class="fa fa-bars"></i>
-        </a>
+		<a href="#" id="show-sidebar" class="btn btn-sm btn-dark">
+			<i class="fa fa-bars"></i>
+		</a>
 
-        <nav id="sidebar" class="sidebar-wrapper">
-            <div class="sidebar-content">
+		<nav id="sidebar" class="sidebar-wrapper">
+			<div class="sidebar-content">
 
-                <div class="sidebar-brand">
+				<div class="sidebar-brand">
 
-                    <a href="#">پنل @roleName دیجی کالا</a>
+					<a href="#">پنل @roleName فروشگاه اینترنتی</a>
 
-                    <div id="close-sidebar">
-                        <i class="fa fa-times"></i>
-                    </div>
+					<div id="close-sidebar">
+						<i class="fa fa-times"></i>
+					</div>
 
-                </div>
-                <div class="sidebar-header">
+				</div>
+				<div class="sidebar-header">
 
-                    <div class="user-info">
+					<div class="user-info">
 
-                        <span class="user-name">
+						<span class="user-name">
 
-                        </span>
-                        <span class="user-role">
-                            @roleName
-                        </span>
-                        <span class="user-status">
-                            <i class="fa fa-circle"></i>
-                            <span>آنلاین</span>
-                        </span>
-                    </div>
-                    <div class="user-pic">
-                        @if (roleName.Contains(StaticData.Admin))
-                        {
-                            <img src="~/images/site/dk.png" alt="دیجی کالا" width="80" height="80" class="img-responsive" />
-                        }
-                        else
-                        {
+						</span>
+						<span class="user-role">
+							@roleName
+						</span>
+						<span class="user-status">
+							<i class="fa fa-circle"></i>
+							<span>آنلاین</span>
+						</span>
+					</div>
+					<div class="user-pic">
+						@if (roleName.Contains(StaticData.Admin))
+						{
+								<img src="~/images/site/dk.png" alt="دیجی کالا" width="80" height="80" class="img-responsive" />
+						}
+						else
+						{
+								<img src="~/images/site/user.png" alt="دیجی کالا" width="80" height="80" class="img-responsive" />
+						}
+					</div>
 
-                        }
-                    </div>
+				</div>
 
-                </div>
+				<div class="sidebar-menu">
+					<ul>
 
-                <div class="sidebar-menu">
-                    <ul>
+						@if (roleName.Contains(StaticData.Admin))
+						{
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">کاربران</span>
+										<span class="pull-left fa fa-users"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="#">
+													مشتریان
+												</a>
+											</li>
+											<li>
+												<a href="/Admin/ShowActiveStores/">
+													فروشگاه ها
+												</a>
+											</li>
+											<li>
+												<a href="/Admin/ShowStoreCategories">
+													انتظار
+												</a>
+											</li>
+										</ul>
+									</div>
+								</li>
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">محصولات</span>
+										<span class="pull-left fa fa-th-list"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="/Admin/Categories/">
+													سردسته ها
+												</a>
+											</li>
+											<li>
+												<a href="/Admin/ShowBrands/">
+													برند ها
+												</a>
+											</li>
+											<li>
+												<a href="/Admin/ShowFields/">
+													مشخصه ها
+												</a>
+											</li>
+											<li>
+												<a href="/Admin/ShowAllProducts/">
+													نمایش محصولات
+												</a>
+											</li>
+										</ul>
+									</div>
+								</li>
 
-                        @if (roleName.Contains(StaticData.Admin))
-                        {
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">کاربران</span>
-                                    <span class="pull-left fa fa-users"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="#">
-                                                مشتریان
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Admin/ShowActiveStores/">
-                                                فروشگاه ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Admin/ShowStoreCategories">
-                                                انتظار
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">محصولات</span>
-                                    <span class="pull-left fa fa-th-list"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="/Admin/Categories/">
-                                                سردسته ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Admin/ShowBrands/">
-                                                برند ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Admin/ShowFields/">
-                                                مشخصه ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Admin/ShowAllProducts/">
-                                                نمایش محصولات
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">تبلیغات</span>
+										<span class="pull-left fa fa-image"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="/Admin/ShowSliders">
+													اسلایدر
+												</a>
+											</li>
+											<li>
+												<a href="/Admin/ShowBanners">
+													جایگاه ها
+												</a>
+											</li>
+										</ul>
+									</div>
+								</li>
 
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">تبلیغات</span>
-                                    <span class="pull-left fa fa-image"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="/Admin/ShowSliders">
-                                                اسلایدر
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Admin/ShowBanners">
-                                                جایگاه ها
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">مالی</span>
+										<span class="pull-left fa fa-money"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="/Admin/ShowAllCoupons">
+													کوپن ها
+												</a>
+											</li>
+										@*<li>
+											<a href="/Panel/ShowProducts">
+											محصولات
+											</a>
+											</li>*@
+										</ul>
+									</div>
+								</li>
 
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">مالی</span>
-                                    <span class="pull-left fa fa-money"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="/Admin/ShowAllCoupons">
-                                                کوپن ها
-                                            </a>
-                                        </li>
-                                        @*<li>
-                                                <a href="/Panel/ShowProducts">
-                                                    محصولات
-                                                </a>
-                                            </li>*@
-                                    </ul>
-                                </div>
-                            </li>
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">تنظیمات</span>
+										<span class="pull-left fa fa-cogs"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="/Admin/ShowRolePermissions">
+													تنظیمات نقش ها و دسترسی ها
+												</a>
+											</li>
+											<li>
+												<a href="/Admin/Setting">
+													تنظیمات سایت
+												</a>
+											</li>
+										</ul>
+									</div>
+								</li>
+						}
+						else if   (roleName.Contains(StaticData.Store))
+						{
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">محصولات</span>
+										<span class="pull-left fa fa-barcode"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="/Panel/ShowBrands">
+													برند ها
+												</a>
+											</li>
+											<li>
+												<a href="/Panel/ShowProducts">
+													محصولات
+												</a>
+											</li>
+										</ul>
+									</div>
+								</li>
 
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">تنظیمات</span>
-                                    <span class="pull-left fa fa-cogs"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="/Admin/ShowRolePermissions">
-                                                تنظیمات نقش ها و دسترسی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Admin/Setting">
-                                                تنظیمات سایت
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        }
-                        else if(roleName.Contains(StaticData.Store))
-                        {
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">محصولات</span>
-                                    <span class="pull-left fa fa-barcode"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="/Panel/ShowBrands">
-                                                برند ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Panel/ShowProducts">
-                                                محصولات
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">مالی</span>
+										<span class="pull-left fa fa-money"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="/Panel/ShowCoupons">
+													کوپن ها
+												</a>
+											</li>
+											<li>
+												<a href="/Panel/BankCard">
+													حساب مالی
+												</a>
+											</li>
+										</ul>
+									</div>
+								</li>
 
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">مالی</span>
-                                    <span class="pull-left fa fa-money"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="/Panel/ShowCoupons">
-                                                کوپن ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Panel/BankCard">
-                                                حساب مالی
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+								<li class="sidebar-dropdown">
+									<a href="#">
+										<span class="pull-right">تنظیمات</span>
+										<span class="pull-left fa fa-cogs"></span>
+									</a>
+									<div class="sidebar-submenu">
+										<ul>
+											<li>
+												<a href="/Panel/Edit">
+													مشخصات فروشگاه
+												</a>
+											</li>
+										@*<li>
+											<a href="/Panel/Activate">
+											فعالسازی حساب
+											</a>
+											</li>*@
+											<li>
+												<a href="/Panel/ShowStoreCategory/">
+													بارگزاری مدارک
+												</a>
+											</li>
+										</ul>
+									</div>
+								</li>
+								<li>
+								<a href="/Panel/ShowOrders">
+									<span class="pull-right">سفارش های فروش</span>
+									<span class="pull-left fa fa-order"></span>
+								</a>
+							</li>
+						}
+							<li>
+								<a href="/Home/ShowOrders">
+									<span class="pull-right">سفارش های خرید</span>
+									<span class="pull-left fa fa-shopping-cart"></span>
+								</a>
+							</li>
+							<li>
+								<a href="/Home/UserInformation">
+									<span class="pull-right">مشخصات کاربری</span>
+									<span class="pull-left fa fa-user-circle-o"></span>
+								</a>
+							</li>
+					</ul>
+				</div>
 
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <span class="pull-right">تنظیمات</span>
-                                    <span class="pull-left fa fa-cogs"></span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a href="/Panel/Edit">
-                                                مشخصات فروشگاه
-                                            </a>
-                                        </li>
-                                        @*<li>
-                                            <a href="/Panel/Activate">
-                                                فعالسازی حساب
-                                            </a>
-                                        </li>*@
-                                        <li>
-                                            <a href="/Panel/ShowStoreCategory/">
-                                                بارگزاری مدارک
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        }
+				<div class="sidebar-footer">
 
-                    </ul>
-                </div>
+					@if (roleName.Contains(StaticData.Admin))
+					{
+							<a href="/Admin/ShowBrands">
+								<i class="fa fa-bell"></i>
+								<span class="badge badge-pill badge-warning notification">@adminBell</span>
+							</a>
 
-                <div class="sidebar-footer">
+							<a href="#">
+								<i class="fa fa-envelope"></i>
+								<span class="badge badge-pill badge-warning notification">0</span>
+							</a>
 
-                    @if (roleName.Contains(StaticData.Admin))
-                    {
-                        <a href="/Admin/ShowBrands">
-                            <i class="fa fa-bell"></i>
-                            <span class="badge badge-pill badge-warning notification">@adminBell</span>
-                        </a>
+							<a href="#">
+								<i class="fa fa-cog"></i>
+								<span class="badge badge-pill badge-warning notification">0</span>
+							</a>
 
-                        <a href="#">
-                            <i class="fa fa-envelope"></i>
-                            <span class="badge badge-pill badge-warning notification">1</span>
-                        </a>
+							<a href="/Accounts/LogOut">
+								<i class="fa fa-power-off"></i>
+							</a>
+					}
+					else if   (roleName.Contains(StaticData.Store))
+					{
+						<a href="/Accounts/LogOut">
+								<i class="fa fa-power-off"></i>
+							</a>
+					}
+					else
+					{
+						<a href="/Accounts/LogOut">
+								<i class="fa fa-power-off"></i>
+							</a>
+					}
+				</div>
+			</div>
+		</nav>
+	</div>
 
-                        <a href="#">
-                            <i class="fa fa-cog"></i>
-                            <span class="badge badge-pill badge-warning notification">5</span>
-                        </a>
+	<div>
+		@RenderBody()
+	</div>
 
-                        <a href="/Accounts/LogOut">
-                            <i class="fa fa-power-off"></i>
-                        </a>
-                    }
-                    else if(roleName.Contains(StaticData.Store))
-                    {
-                        <a href="#">
-                            <i class="fa fa-bell"></i>
-                            <span class="badge badge-pill badge-warning notification">3</span>
-                        </a>
+	<script src="~/js/jquery-1.9.1.min.js"></script>
+	<script src="~/js/bootstrap-rtl.min.js"></script>
+	<script src="~/js/panel.js"></script>
 
-                        <a href="#">
-                            <i class="fa fa-envelope"></i>
-                            <span class="badge badge-pill badge-warning notification">1</span>
-                        </a>
-
-                        <a href="#">
-                            <i class="fa fa-cog"></i>
-                            <span class="badge badge-pill badge-warning notification">5</span>
-                        </a>
-
-                        <a href="/Accounts/LogOut">
-                            <i class="fa fa-power-off"></i>
-                        </a>
-                    }
-
-                </div>
-
-            </div>
-        </nav>
-
-    </div>
-
-    <div>
-        @RenderBody()
-    </div>
-
-    <script src="~/js/jquery-1.9.1.min.js"></script>
-    <script src="~/js/bootstrap-rtl.min.js"></script>
-    <script src="~/js/panel.js"></script>
-
-    @RenderSection("mySection", false)
+	@RenderSection("mySection", false)
 
 </body>
 </html>

@@ -32,6 +32,7 @@
 					<div class="cart-dropdown-btn ">
 						<a href="#">
 							<span>سبد خرید</span>
+							<span class="label label-info" id="basketCount"></span>
 						</a>
 					</div>
 					<div class="minicart-content">
@@ -42,8 +43,8 @@
 
 				@if (User.Identity.IsAuthenticated)
 				{
-					<div class="profile-dropdown-btn">
-						<a href="#">پروفایل</a>
+					<div class="profile-dropdown-btn dropdowns">
+						<a href="/Panel/Dashboard/">پروفایل</a>
 					</div>
 				}
 				else
@@ -56,7 +57,7 @@
 			</div>
 		</div>
 
-		<div class="row">
+		<div class="row margin-from-header">
 
 			<div class="content">
 
@@ -97,8 +98,16 @@
 		<div>
 			@RenderBody()
 		</div>
-
+		
 	</div>
+	<div class="footer">
+			<p class="text-center">
+				فروشگاه خرید و فروش محصولات مختلف کاربران با اطمینان خرید و فروش کنید بدون واسطه
+			</p>
+			<p class="text-center margin-top-30">
+				تمامی حقوق این وبسایت متعلق است به فروشگاه و در صورت نقص حقوق کپی رایت گزارش داده خواهد شد
+			</p>
+		</div>
 
 	<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
 
