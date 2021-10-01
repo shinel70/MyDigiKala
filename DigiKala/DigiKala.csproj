@@ -3,9 +3,14 @@
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<IsPublishable>True</IsPublishable>
+		<Platforms>AnyCPU;x86;x64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <WarningLevel>5</WarningLevel>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
 	  <WarningLevel>5</WarningLevel>
 	</PropertyGroup>
 
@@ -13,12 +18,9 @@
 	  <WarningLevel>5</WarningLevel>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <Compile Remove="wwwroot\ckeditor\**" />
-	  <Content Remove="wwwroot\ckeditor\**" />
-	  <EmbeddedResource Remove="wwwroot\ckeditor\**" />
-	  <None Remove="wwwroot\ckeditor\**" />
-	</ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+	  <WarningLevel>5</WarningLevel>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\DigiKala.Core\DigiKala.Core.csproj" />
